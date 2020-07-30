@@ -1,0 +1,8 @@
+datatype;couleur;type_fr;type_en
+meteosol_sh;#ffff00;Station météo-sol;Biometeorological station
+meteosol_infraj;#ffff00;Station météo-sol;Biometeorological station
+piezo_infraj;#2c7bb6;Piézomètre;Piezometer
+piezo_sh;#2c7bb6;Piézomètre;Piezometer
+eddycovariance_sh;#7b3294;Station eddy-covariance;Eddy-covariance station
+chambreco2_infraj;#f39c12;Embase pour chambre CO2;Base for CO2 chamber
+doc_infraj;#ff5964;Station multiparamètre à l'exutoire;Multiparameter station at the outlet

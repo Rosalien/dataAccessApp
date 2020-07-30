@@ -1,0 +1,18 @@
+::build_vignettes()title: "dataAccessApp"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dataAccessApp}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dataAccessApp)
+```

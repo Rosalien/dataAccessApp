@@ -17,10 +17,18 @@
 ## Add one line by package you want to add as dependency
 usethis::use_package( "thinkr" )
 
+listpaquets <- c("shiny","RPostgreSQL","DT","pool","leaflet","stringr","sp","dygraphs","xts","data.table","anytime",
+"curl","dplyr","wesanderson","shinyjs","shinycssloaders","shinyWidgets","plotly",
+"reshape","shinythemes","tableHTML","gridExtra","grid","shiny.i18n",
+"RColorBrewer","shinyalert","gsubfn","suncalc","rintrojs","esquisse","shinydashboard","ggtern","DBI","ggplot2","yaml")
+sapply(listpaquets,usethis::use_package)
+
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "name_of_module1" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "accessdata" ) # Name of the module
+golem::add_module( name = "welcome" ) 
+golem::add_module( name = "extractiondataset" ) 
+# Name of the module
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
