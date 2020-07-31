@@ -4,7 +4,7 @@
 \alias{appCSS}
 \title{appCSS}
 \usage{
-appCSS(...)
+appCSS()
 }
 \value{
 String of css configuration

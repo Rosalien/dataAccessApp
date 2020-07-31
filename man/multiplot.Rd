@@ -3,8 +3,14 @@
 \name{multiplot}
 \alias{multiplot}
 \title{multiplot}
+\source{
+https://stackoverflow.com/questions/33867301/dynamic-grid-plots-in-shiny-r
+}
 \usage{
 multiplot(..., plotlist = NULL, file, cols = 1, layout = NULL)
+}
+\arguments{
+\item{...}{ggplot objects can be passed in ...}
 }
 \value{
 ggplots

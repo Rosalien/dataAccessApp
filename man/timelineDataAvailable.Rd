@@ -4,7 +4,7 @@
 \alias{timelineDataAvailable}
 \title{timelineDataAvailable}
 \usage{
-timelineDataAvailable(tableCarac, allSite, facetWrapOption)
+timelineDataAvailable(tableCarac, allSite, facetWrapOption, translator)
 }
 \arguments{
 \item{tableCarac}{data.table from mod_welcome}
@@ -12,10 +12,12 @@ timelineDataAvailable(tableCarac, allSite, facetWrapOption)
 \item{allSite}{Logical operator to select allSite or not (TRUE, FALSE)}
 
 \item{facetWrapOption}{Logical operator to use facetWrap on site or site/station (TRUE, FALSE)}
+
+\item{translator}{translator object for translation}
 }
 \value{
 dygraph of timetrend
 }
 \description{
-Chart of disponibility data (welcome module)
+Chart of data disponibility (used in mod_welcome)
 }

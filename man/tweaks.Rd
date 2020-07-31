@@ -7,7 +7,7 @@
 https://stackoverflow.com/questions/36898492/aligning-checkbox-elements-in-many-coumns-in-a-shiny-app
 }
 \usage{
-tweaks(...)
+tweaks()
 }
 \value{
 String of java script

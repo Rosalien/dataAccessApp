@@ -9,7 +9,7 @@
 #' @export
 # 
 
-googleAnalyticsParameter <- function(...){
+googleAnalyticsParameter <- function(){
 '<!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143674771-1"></script>
         <script>
@@ -31,7 +31,7 @@ googleAnalyticsParameter <- function(...){
 #' }
 #' @export
 # 
-tweaks <- function(...){
+tweaks <- function(){
 ".multicol { 
   height:auto;
   -webkit-column-count: 4;
@@ -52,7 +52,7 @@ div.checkbox {margin-left: 0px;}"
 #' }
 #' @export
 # 
-tweaks2 <- function(...){
+tweaks2 <- function(){
 ".multicol .shiny-options-group{
                             -webkit-column-count: 4; /* Chrome, Safari, Opera */
                             -moz-column-count: 4;    /* Firefox */
@@ -74,7 +74,7 @@ tweaks2 <- function(...){
 #' appCSS()
 #' }
 #' @export
-appCSS <- function(...){
+appCSS <- function(){
 "
   #loading-content {
     position: absolute;
@@ -93,7 +93,7 @@ appCSS <- function(...){
 
 #' @title dyMultiColumn
 #' @description MultiColumn in dygraph
-#' @sources https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
+#' @source https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
 #' @param dygraph dygraph object
 #' @importFrom dygraphs dygraph
 #' @importFrom dygraphs dyPlotter
@@ -113,7 +113,7 @@ dyMultiColumn <- function(dygraph) {
 
 #' @title dyBarChart
 #' @description Bar chart in dygraph
-#' @sources https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
+#' @source https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
 #' @param dygraph dygraph object
 #' @importFrom dygraphs dygraph
 #' @importFrom dygraphs dyPlotter
@@ -134,7 +134,7 @@ dyBarChart <- function(dygraph) {
 
 #' @title dyCSScool
 #' @description css configuration for dygraph
-#' @sources https://github.com/rstudio/dygraphs/issues/227
+#' @source https://github.com/rstudio/dygraphs/issues/227
 #' @param dygraph dygraph object
 #' @importFrom dygraphs dygraph
 #' @return css configuration for dygraph
@@ -202,9 +202,10 @@ dyCSScool <- function(dygraph){
 #' If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
 #' then plot 1 will go in the upper left, 2 will go in the upper right, and
 #' 3 will go all the way across the bottom.
+#' @param ... ggplot objects can be passed in ...
 #' @return ggplots
 #' @import grid
-#' @sources https://stackoverflow.com/questions/33867301/dynamic-grid-plots-in-shiny-r
+#' @source https://stackoverflow.com/questions/33867301/dynamic-grid-plots-in-shiny-r
 #' @export
 #' 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -243,12 +244,13 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 #' @title grid_arrange_shared_legend
 #' @description Combined ggplots with a common legend
+#' @param ... ggplot objects can be passed in ...
 #' @return ggplots
 #' @importFrom ggplot2 ggplotGrob
 #' @importFrom ggtern arrangeGrob
 #' @importFrom grid grid.newpage
 #' @importFrom grid grid.draw
-#' @sources http://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
+#' @source http://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
 #' @export
  
 grid_arrange_shared_legend <- function(...,nrow = 1, ncol = length(list(...)), position = c("bottom", "right")) {
@@ -278,6 +280,7 @@ grid_arrange_shared_legend <- function(...,nrow = 1, ncol = length(list(...)), p
 
 #' @title theme_chart2
 #' @description ggplot2 theme
+#' @param ... ggplot objects can be passed in ...
 #' @param position String of position of legend (ex. "bottom")
 #' @return ggplot2 theme configuration
 #' @import ggplot2
@@ -307,6 +310,7 @@ theme_chart <- function(position="bottom",...) {
 
 #' @title theme_chart2
 #' @description ggplot2 theme
+#' @param ... ggplot objects can be passed in ...
 #' @param position String of position of legend (ex. "bottom")
 #' @return ggplot2 theme configuration
 #' @import ggplot2
@@ -330,7 +334,6 @@ theme(
 
 #' @title dbselect
 #' @description Create dialog windows to download data in mod_access
-#' @param ...
 #' @return data.table with average of values by frequenceSelected
 #' @importFrom data.table setDT
 #' @importFrom shiny modalDialog

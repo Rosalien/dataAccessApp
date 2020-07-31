@@ -1,0 +1,132 @@
+fr,en
+Visualiser & Extraire les données,Display & Extract data
+Chargement ...,Loading ...
+Visualisation & Extraction des donnée du SNO-T,Display & Extract data of SNO-Tourbières
+Stations,Stations
+Piézomètres,Piezometers
+Chambres,Chambers
+Flux de GES dans les chambres,GHG flux in chambers
+Jour & Nuit,Day & Night
+Jour,Day
+Nuit,Night
+Fréquence,Frequency
+Infra-jour,Infra-day
+Heure,Hour
+Semaine,Week
+Mois,Month
+Année,Year
+Flux de GES par eddy-covariance,GHG flux by eddy-covariance
+Température du sol,Soil temperature
+Teneur en eau du sol,Soil water content
+Flux de chaleur dans le sol,Flux of heat in soil
+Mise à jour de la sélection,Update selection
+Mise à jour de la fréquence et du type de jour,Update frequency and type of day
+Rose des vents,Wind rose
+Sélection des variables,Select variables
+Description de la sélection,Description of data selection
+Données,Data
+Visualiser,Display
+Analyser,Analyzis
+Télécharger,Download
+Télécharger au format OZCAR,Download OZCAR archive
+Télécharger au format ZENODO,Download ZENODO archive
+Télécharger les données,Download data
+Résumé de la licence,Licence summary
+Comment citer ?,How to cite ?
+Métadonnées,Metadata
+Format de la table,Table format
+Période,Period
+Veuillez sélectionner une période,Please select a period
+Veuillez sélectionner une station de mesure ou un piézomètre,Please select a station or a piezometer
+Météo,Meteo
+Hydrologie,Hydrology
+Aucune variable sélectionnée. Veuillez sélectionner au moins une station et variable,No variable selected. Please select station or a piezometer and a variable
+J'accepte les conditions d'utilisation,I accept the conditions of use
+Annuler,Cancel
+Période d'analyse sans données,Period of analysis without data
+Préparation des données ...,Data preparation ...
+Préparation de la table ...,Table preparation ...
+Fin de la préparation de la table ...,End of table preparation ...
+Requête de la base de données ...,Query database ...
+Aggrégation des données ...,Aggregation data ...
+Préparation du graphique ...,Chart preparation ...
+Finalisation ...,Finalization ...
+Début de l'extraction ...,Extraction begin ...
+Création de la métadonnée ...,Metadata creation
+Création du fichier ...,File creation ...
+Sites & instruments,Sites & sensors
+Données disponibles,Data available
+Instruments & Données,Sensor & Data
+Tourbières du SNO-T,Peatland of SNO-Tourbières
+Retour à la carte de France,Back to France map
+Calcul des paramètres jour/nuit ...,Night & Day parameters ...
+Unité,Unit
+Jeu de données,Dataset
+Début,Begin
+Fin,End
+Capteur,Sensor
+Type de station,Type of station
+Toutes les tourbières,All peatlands
+au,to
+Extraction des jeux de données,Extract dataset
+Description du jeu de données,Dataset description
+Jeux de données du SNO-T,Dataset of SNO-Tourbières
+Biogéochimie,Biogeochemistry
+Moyenne,Mean
+Médiane,Median
+Statistiques descriptives,Descriptive statistics
+Écart-type,SD
+Stats,Stats
+Boxplot,Boxplot
+Chronique,Chronic
+Statistiques,Statistics
+Carte,Map
+Par,By
+Série temporelle,Time series
+Détail par,See details by
+Détail par site ou station,See details by site or station
+Thème,Theme
+Absence de données,No data
+Sélectionner une station et/ou un piézomètre et/ou une chambre,Please select a station and/or piezometer and/or a chamber (see Help bouton)
+Sans,Without
+Accès aux données,Access Data
+Bienvenue,Welcome
+Tous les sites,All sites
+Titre,Title
+Généalogie,Genealogy
+Aide,Help
+Sélectionnez les variables,Select variable selected
+Mettre à jour la sélection des stations et des variables sélectionnées,Update observation location and variable selected
+Mettre à jour la fréquence d'analyse et le type de jour (jour ou nuit),Update frequency and type of day
+Précédent,Back
+Suivant,Next
+Verticale,Long
+Horizontale,Wide
+Licence & conditions d'utilisation des données du SNO-T,Terms & conditions of data use
+Sauf mentions contraires,Unless otherwise stated
+les données du SNO-T sont diffusées sous,data from SNO-Tourbières are shared under
+Conditions d'utilisation des données du SNO-T,Conditions of data use (in french)
+DOI et citations pour les sous-jeux de données du SNO-Tourbières,DOI and citations for dataset is part of SNO-Tourbières dataset
+DOI et citations pour des jeux de données du SNO-Tourbières,DOI and citations for dataset of SNO-Tourbières
+Sélection des données pour le téléchargement,Data selected for download
+Comment lire les données ?,How to read data ?
+Contenu du zip,Zip content
+Construire un graphique,Build a chart
+Télécharger la table,Download table
+Carte des tourbières et des instruments,Map of peatlands & sensors
+Liste des instruments,List of sensors
+Carte des stations,Map of sensors
+Caractéristiques de la sélection,Data select description
+Description des variables,Variables description
+Instruments & Méthodes,Sensors & Methods
+Instrument,Sensor
+Fabricant,Manufacturer
+Méthode,Method
+Description,Description
+Compression...,Zip...
+DOI de toutes les versions,DOI for all versions
+Fait partie de ce jeu de données,Is part of this dataset
+Fonctionnement,Operation
+Utilisation de l'application web étape par étape, Use web application step-by-step
+Comment construire un graphique ?, How to build a chart ?
+Comment utiliser Data Access ?,How to use Data Access ?

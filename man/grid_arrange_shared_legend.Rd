@@ -3,6 +3,9 @@
 \name{grid_arrange_shared_legend}
 \alias{grid_arrange_shared_legend}
 \title{grid_arrange_shared_legend}
+\source{
+http://stackoverflow.com/questions/13649473/add-a-common-legend-for-combined-ggplots
+}
 \usage{
 grid_arrange_shared_legend(
   ...,
@@ -10,6 +13,9 @@ grid_arrange_shared_legend(
   ncol = length(list(...)),
   position = c("bottom", "right")
 )
+}
+\arguments{
+\item{...}{ggplot objects can be passed in ...}
 }
 \value{
 ggplots

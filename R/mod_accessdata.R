@@ -1,4 +1,4 @@
-#translator <- Translator$new(translation_csvs_path = "translation")
+#translator <- shiny.i18n::Translator$new(translation_csvs_path = "translation")
 #translator$set_translation_language("en")
 #language <- "en"
 
@@ -10,16 +10,33 @@
 #'
 #' @noRd 
 #'
+#' @importFrom golem get_golem_options
 #' @importFrom shiny NS tagList 
-
+#' @importFrom shiny.i18n Translator
+#' @importFrom shinycssloaders withSpinner
+#' @importFrom plotly plotlyOutput
+#' @importFrom DT dataTableOutput datatable renderDataTable
+#' @importFrom leaflet leafletOutput renderLeaflet
+#' @import shinyWidgets
+#' @importFrom shinyalert useShinyalert
+#' @importFrom rintrojs introjsUI introBox hintjs introjs
+#' @import esquisse
+#' @import shinyjs
+#' @import shinydashboard
+#' 
 mod_accessdataUI <- function(id,translationVariable){
   ns <- NS(id)
+  language <- get_golem_options("language")
+  pool <- get_golem_options("pool")
+
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator$set_translation_language(language)
 
   # Pour mettre des checkboxs sur différentes colonnes
   tweaks <- list(tags$head(tags$style(HTML(tweaks2()))))
   
   # Chargement des données 
-  caracData <- caracdata(language)[order(variable),]
+  caracData <- caracdata(pool,language)[order(variable),]
 
   # Création de plusieurs listes pour l'internatinoalisation
   choicesDayNight <- c("day/night","day","night")
@@ -63,12 +80,12 @@ tabPanel(translator$t("Accès aux données"),
           icon = icon("bell"),width = "100%",circle = FALSE,status = "warning",label = translator$t("Chambres"),
           dropdowSelectionStation(unique(caracData[grepl("ch", caracData$code_site_station)==TRUE,list(code_site_station,site_nom,station_nom)]),"siteChambre_")),
         data.step = 1,
-        data.intro = includeMarkdown(paste0("www/md/localationSelected_",language,".md"))),
+        data.intro = includeMarkdown(paste0("inst/app/www/md/localationSelected_",language,".md"))),
         br(),
         introBox(
         uiOutput(ns('minmaxdateSNOT')),
         data.step = 2,
-        data.intro = includeMarkdown(paste0("www/md/periodSelected_",language,".md"))
+        data.intro = includeMarkdown(paste0("inst/app/www/md/periodSelected_",language,".md"))
         ),
         introBox(
         awesomeRadio(
@@ -79,7 +96,7 @@ tabPanel(translator$t("Accès aux données"),
           inline = TRUE
         ),
         data.step = 3,
-        data.intro = includeMarkdown(paste0("www/md/dayNightSelected_",language,".md"))#translator$t("Sélectionnez le type de jour")
+        data.intro = includeMarkdown(paste0("inst/app/www/md/dayNightSelected_",language,".md"))#translator$t("Sélectionnez le type de jour")
         ),
         introBox(
         fluidRow(
@@ -95,7 +112,7 @@ tabPanel(translator$t("Accès aux données"),
             )
           ),
           data.step = 4,
-          data.intro = includeMarkdown(paste0("www/md/frequencySelected_",language,".md"))
+          data.intro = includeMarkdown(paste0("inst/app/www/md/frequencySelected_",language,".md"))
         ),
         introBox(
           dropdownButton(icon = icon("hand-pointer"),width = "650%",circle = FALSE, status = "warning",label = translator$t("Sélection des variables"),
@@ -115,7 +132,7 @@ tabPanel(translator$t("Accès aux données"),
               column(2,checkboxGroupInput(ns("variableBiogeo"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL))
           ),
           data.step = 5,
-          data.intro = includeMarkdown(paste0("www/md/variableSelected_",language,".md"))
+          data.intro = includeMarkdown(paste0("inst/app/www/md/variableSelected_",language,".md"))
           )
       ),
       column(10,
@@ -125,14 +142,14 @@ tabPanel(translator$t("Accès aux données"),
           introBox(
             actionBttn(ns("go0"),icon = icon("sync"),style = "fill", color = "danger",label = translator$t("Mise à jour de la sélection"),size="sm"),
             data.step = 6,
-            data.intro = includeMarkdown(paste0("www/md/updateSelection_",language,".md"))
+            data.intro = includeMarkdown(paste0("inst/app/www/md/updateSelection_",language,".md"))
             )
           ),
          column(4,offset = 0,style='margin: 0px 0px 0px -50px',
           introBox(
           actionBttn(ns("updatefrequence0"),icon = icon("sync"),style = "fill", color = "danger",label = translator$t("Mise à jour de la fréquence et du type de jour"),size="sm"),
             data.step = 7,
-            data.intro = includeMarkdown(paste0("www/md/updateFrequency_",language,".md"))
+            data.intro = includeMarkdown(paste0("inst/app/www/md/updateFrequency_",language,".md"))
           )
           ),
         column(4,
@@ -193,12 +210,12 @@ tabPanel(translator$t("Accès aux données"),
             fluidRow(
               column(3,
                 dropdownButton(
-                  includeMarkdown(paste0("www/md/licence_",language,".md")),width = "200%",icon=icon("creative-commons"),circle=FALSE,label=translator$t("Résumé de la licence"),status = "info"
+                  includeMarkdown(paste0("inst/app/www/md/licence_",language,".md")),width = "200%",icon=icon("creative-commons"),circle=FALSE,label=translator$t("Résumé de la licence"),status = "info"
                 )
               ),
               column(3,
                 dropdownButton(
-                  includeMarkdown(paste0("www/md/citation_",language,".md")),width = "200%",icon=icon("quote-right"),circle=FALSE,label=translator$t("Comment citer ?"),status = "info"
+                  includeMarkdown(paste0("inst/app/www/md/citation_",language,".md")),width = "200%",icon=icon("quote-right"),circle=FALSE,label=translator$t("Comment citer ?"),status = "info"
                 )
               )
               ),
@@ -206,17 +223,17 @@ tabPanel(translator$t("Accès aux données"),
             fluidRow(
               column(3,
                 dropdownButton(
-                  includeMarkdown(paste0("www/md/formatTable_",language,".md")),width = "200%",icon=icon("table"),circle=FALSE,label=translator$t("Format de la table"),status = "info"
+                  includeMarkdown(paste0("inst/app/www/md/formatTable_",language,".md")),width = "200%",icon=icon("table"),circle=FALSE,label=translator$t("Format de la table"),status = "info"
                 )
               ),
               column(3,
                 dropdownButton(
-                  includeMarkdown(paste0("www/md/metadata_",language,".md")),width = "200%",icon=icon("file-archive"),circle=FALSE,label=translator$t("Contenu du zip"),status = "info"
+                  includeMarkdown(paste0("inst/app/www/md/metadata_",language,".md")),width = "200%",icon=icon("file-archive"),circle=FALSE,label=translator$t("Contenu du zip"),status = "info"
                 )
               ),
               column(3,
                 dropdownButton(
-                  includeMarkdown(paste0("www/md/howToRead_",language,".md")),width = "200%",icon=icon("readme"),circle=FALSE,label=translator$t("Comment lire les données ?"),status = "warning"
+                  includeMarkdown(paste0("inst/app/www/md/howToRead_",language,".md")),width = "200%",icon=icon("readme"),circle=FALSE,label=translator$t("Comment lire les données ?"),status = "warning"
                 )
               )
               ),
@@ -247,10 +264,15 @@ tabPanel(translator$t("Accès aux données"),
 mod_accessdata <- function(input, output, session,translationVariable){
   my_wd <- getwd()
   ns <- session$ns
-
+  language <- get_golem_options("language")
+  pool <- get_golem_options("pool")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator$set_translation_language(language)
+  
 ##################################Chargement des données####################################
-  col_station <- read.csv("www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
-  caracDataSensor <- caracdata(language)[order(variable)]
+
+  col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
+  caracDataSensor <- caracdata(pool,language)[order(variable)]
   
   variableCaracData <- c("code_jeu","code_site","code_station","code_site_station","site_nom","theme","datatype","variable","unite","mindate","maxdate","zet_coordonnees_bbox")
   metadataVariable <- c("definition","station_description","site_description","station_nom")
@@ -349,18 +371,9 @@ output$timetrendSNOT <- renderUI({
         subsetoutbdSNOT <- sqlOutputAndAggregateMean()
 
         incProgress(0.3,i18n()$t("Préparation du graphique ..."))
-
         dy_graphSite <- dygraphSite(subsetoutbdSNOT[(grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==FALSE) & subsetoutbdSNOT$variable %!in% c("WTD","TW","GPP","RE","NEE"),],frequenceSelected())
-        dy_graphTypeVariable <- dygraphTypeVariable(subsetoutbdSNOT[grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==TRUE,],frequenceSelected())
-        
-        # Revoir cette logique de construction (ou la fonction dygraphPiezo ?)
-        #dy_graphPiezoWTD <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% "WTD",],frequenceSelected())
-        #dy_graphPiezoTW <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% "TW",],frequenceSelected())
-
+        dy_graphTypeVariable <- dygraphTypeVariable(subsetoutbdSNOT[grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==TRUE,],frequenceSelected())       
         dy_graphChambrePiezo <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% c("GPP","RE","NEE","TW","WTD"),],frequenceSelected())
-        #dy_graphPiezoRE <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% "RE",],frequenceSelected())
-        #dy_graphPiezoNEE <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% "NEE",],frequenceSelected())
-
         incProgress(0.1,i18n()$t("Finalisation ..."))
 
         tagList(dy_graphSite,dy_graphTypeVariable,dy_graphChambrePiezo)
@@ -379,7 +392,7 @@ output$timetrendSNOT <- renderUI({
       )
 
     # Création de la map
-    sensorSelectedMap(mapSensorSelected,FALSE)
+    sensorSelectedMap(mapSensorSelected,FALSE,translator)
 })
 
 # renderUI pour la table de description des variables sélectionnées
@@ -428,7 +441,7 @@ output$timetrendSNOT <- renderUI({
 # renderUI pour la synthèse des citations principales
   output$Citation <- DT::renderDataTable({
     CodeJeu <- unique(recapTable()[,code_jeu])
-    Jeu <- tableJeu()[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
+    Jeu <- tableJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
     lapply(1:nrow(Jeu),function(x){
       if(!is.na(Jeu[x,doi])){
             Jeu[x,doi:=createLink(paste0("http://dx.doi.org/",doi))]
@@ -452,7 +465,7 @@ output$timetrendSNOT <- renderUI({
 # renderUI pour la synthèse des citations des sous-jeux de données
 output$underCitation <- DT::renderDataTable({
     CodeJeu <- unique(recapTable()[,code_jeu])
-    SousJeu <- tableSousJeu()[code_jeu %in% CodeJeu,list(code_jeu,doi,citation,date_debut,date_fin)] 
+    SousJeu <- tableSousJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation,date_debut,date_fin)] 
     names(SousJeu) <- c(i18n()$t("Fait partie de ce jeu de données"),"DOI","Citation",i18n()$t("Début"),i18n()$t("Fin"))
     SousJeu$DOI <- createLink(paste0("http://dx.doi.org/",SousJeu$DOI))
     retData <- DT::datatable(SousJeu,escape = FALSE,rownames= FALSE,
@@ -650,7 +663,7 @@ facetWrapSelectedTable <- reactive({
   sqlOutputQuery <- eventReactive(go(),{
     print("Debut queryDataSNOT")
     # Lancement de la requête + melt des données
-    meltvalue <- queryDataSNOT(variableSelected(),siteSelected(),periodeSelected())
+    meltvalue <- queryDataSNOT(pool,variableSelected(),siteSelected(),periodeSelected())
     validate(need(nrow(meltvalue)>0,i18n()$t("Période d'analyse sans données")))
     print("Fin queryDataSNOT")
     print("Jointure avec caracData")
@@ -678,19 +691,15 @@ facetWrapSelectedTable <- reactive({
 
 # Reactive pour la requête sql + aggrégation + Moyenne des valeurs day et night
 # (Utilisée pour l'extraction et les timeseries)
-
-
   # Controler cette reactive
   sqlOutputAndAggregateMean <- reactive({
     print("---------Lancement sqlOutputAndAggregateMean ---------")
     subsetoutbdAggregate <- sqlOutputAndAggregate()
     # Calcul de la moyenne des valeurs dans le cas dayNightSelected()=="day/night"
         if(dayNightSelected()=="day/night"){
-          #print("if#636")
           subsetoutbdSNOT <- subsetoutbdAggregate[variable !="P_1_1_1",.(value = mean(value,na.rm=TRUE)), by = list(Date,variable,code_site_station,unite,definition,station_description,site_description,station_nom,site_nom)]
           subsetoutbdSNOT <- rbind(subsetoutbdSNOT,subsetoutbdAggregate[variable=="P_1_1_1" & complete.cases(value),.(value = sum(value,na.rm=TRUE)), by = list(Date,variable,code_site_station,unite,definition,station_description,site_description,station_nom,site_nom)])  
         }else{
-         # print("else#640")
           subsetoutbdSNOT <- subsetoutbdAggregate
         }
     print("---------Fin sqlOutputAndAggregateMean ---------")
@@ -702,7 +711,7 @@ facetWrapSelectedTable <- reactive({
     variableSelected <- c("WD_1_1_1","WS_1_1_1")
 
     # Lancement de la requête
-    meltvalue <- queryDataSNOT(variableSelected,siteSelected(),periodeSelected())
+    meltvalue <- queryDataSNOT(pool,variableSelected,siteSelected(),periodeSelected())
     validate(need(nrow(meltvalue)>0,"Période d'analyse sans données"))
 
     # Jointure avec data.table (caracData[meltvalue])
@@ -977,22 +986,13 @@ observe({
           extractionDataCpt <- extracData(extractionDataCpt,frequenceSelected())
       }
 
-      incProgress(0.6,i18n()$t("Création de la métadonnée ..."))
-
-      # Métadonnées OZCAR (Suppression car trop long et pas forcément utile pour l'utilisateur)
-      #metadataJeu <- metadata_jeu()
-      #metadata <- lapply(1:length(metadataJeu),function(x){
-        #pivot <- paste0("Metadata_",CodeJeu[x],".json")
-        #write(metadataJeu[[x]], pivot)
-        #return(pivot)
-        #})
-      
+      incProgress(0.6,i18n()$t("Création de la métadonnée ..."))     
       # Recap du téléchargement
       recapTableDownload <- recapTable()[,list(code_site_station,site_nom,station_nom,variable,definition,unite,fabricant,instrument,description_capteur,zet_coordonnees_bbox,description_methode)]
             
       # Recap des DOI
       CodeJeu <- unique(recapTable()[,code_jeu])
-      recapDOIJeu <- tableJeu()[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
+      recapDOIJeu <- tableJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
       names(recapDOIJeu) <- c(i18n()$t("Jeu de données"),i18n()$t("DOI de toutes les versions"),"Citation")
 
       incProgress(0.2,i18n()$t("Création du fichier ..."))

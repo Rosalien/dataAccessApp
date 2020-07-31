@@ -3,6 +3,7 @@
 #' @param input,output,session Internal parameters for {shiny}. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @importFrom shinyjs hide show
 #' @noRd
 app_server <- function( input, output, session ) {
   	 Sys.sleep(5)  

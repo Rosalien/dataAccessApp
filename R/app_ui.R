@@ -3,15 +3,17 @@
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @importFrom shinythemes shinytheme
+#' @importFrom shinycssloaders withSpinner
+#' @importFrom shinyjs useShinyjs inlineCSS hidden
+#' @importFrom shiny.i18n Translator
 #' @noRd
+#' 
 app_ui <- function(request) {
-  tagList(
-    # Leave this function for adding external resources
-    golem_add_external_resources(),
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation/",package = "dataAccessApp"))
+  translator$set_translation_language("en")
     # List the first level UI elements here 
-    fluidPage(
-      h1("dataAccessApp"),
-      theme =shinytheme("flatly"),
+    fluidPage(theme =shinytheme("flatly"),
       useShinyjs(),
       inlineCSS(appCSS()),
       # Loading message
@@ -34,7 +36,6 @@ app_ui <- function(request) {
         )
       )
     )
-  )
 }
 
 #' Add external Resources to the Application

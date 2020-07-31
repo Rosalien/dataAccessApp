@@ -3,6 +3,9 @@
 \name{dyCSScool}
 \alias{dyCSScool}
 \title{dyCSScool}
+\source{
+https://github.com/rstudio/dygraphs/issues/227
+}
 \usage{
 dyCSScool(dygraph)
 }

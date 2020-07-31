@@ -3,6 +3,9 @@
 \name{dyBarChart}
 \alias{dyBarChart}
 \title{dyBarChart}
+\source{
+https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
+}
 \usage{
 dyBarChart(dygraph)
 }

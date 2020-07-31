@@ -2,12 +2,14 @@
 % Please edit documentation in R/dependanciesGraph.R
 \name{sensorSelectedMap}
 \alias{sensorSelectedMap}
-\title{timelineDataAvailable}
+\title{sensorSelectedMap}
 \usage{
-sensorSelectedMap(mapSensorSelected, allSite = FALSE)
+sensorSelectedMap(mapSensorSelected, allSite = FALSE, translator)
 }
 \arguments{
 \item{allSite}{Logical operator to select allSite or not (TRUE, FALSE)}
+
+\item{translator}{translator object for translation}
 
 \item{tableCarac}{data.table from mod_welcome}
 

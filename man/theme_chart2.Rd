@@ -8,6 +8,8 @@ theme_chart2(position = "bottom", ...)
 }
 \arguments{
 \item{position}{String of position of legend (ex. "bottom")}
+
+\item{...}{ggplot objects can be passed in ...}
 }
 \value{
 ggplot2 theme configuration

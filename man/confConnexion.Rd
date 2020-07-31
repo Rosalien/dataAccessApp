@@ -15,3 +15,8 @@ pool configuration
 \description{
 Connexion configuration to database
 }
+\examples{
+\dontrun{
+pool <- confConnexion("~/SI_SNOT/dbconfProd.yaml")
+}
+}

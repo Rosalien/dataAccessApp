@@ -7,7 +7,7 @@
 https://stackoverflow.com/questions/42742191/align-checkboxgroupinput-vertically-and-horizontally
 }
 \usage{
-tweaks2(...)
+tweaks2()
 }
 \value{
 String of java script

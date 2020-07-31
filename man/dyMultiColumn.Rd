@@ -3,6 +3,9 @@
 \name{dyMultiColumn}
 \alias{dyMultiColumn}
 \title{dyMultiColumn}
+\source{
+https://rstudio.github.io/dygraphs/gallery-custom-plotters.html
+}
 \usage{
 dyMultiColumn(dygraph)
 }

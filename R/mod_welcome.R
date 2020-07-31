@@ -1,7 +1,4 @@
-#translator <- Translator$new(translation_csvs_path = "translation")
-#translator$set_translation_language("en")
-#language <- "en"
-allSite <- "All peatlands"
+
 
 #' welcome UI Function
 #'
@@ -11,10 +8,23 @@ allSite <- "All peatlands"
 #'
 #' @noRd 
 #'
+#' @importFrom golem get_golem_options
 #' @importFrom shiny NS tagList 
-
-mod_welcomeUI <- function(id){
+#' @importFrom shiny.i18n Translator
+#' @importFrom shinycssloaders withSpinner
+#' @importFrom plotly plotlyOutput renderPlotly
+#' @importFrom DT dataTableOutput datatable renderDataTable
+#' @importFrom leaflet leafletOutput renderLeaflet
+#' @import shinyWidgets
+#' @import shinydashboard
+#' 
+mod_welcomeUI <- function(id,translationVariable){
   ns <- NS(id)
+  language <- get_golem_options("language")
+  pool <- get_golem_options("pool")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator$set_translation_language(language)
+
   tabPanel(translator$t("Bienvenue"),
   dashboardPage(
     dashboardHeader(disable = TRUE),
@@ -62,11 +72,14 @@ mod_welcomeUI <- function(id){
 #' welcome Server Function
 #'
 #' @noRd 
-mod_welcome <- function(input, output, session){
+mod_welcome <- function(input, output, session,translationVariable){
   ns <- session$ns
+  language <- get_golem_options("language")
+  pool <- get_golem_options("pool")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator$set_translation_language(language)
 
   # Internationalization des variables métadonnées
-  language <- translator$translation_language
   metadataVariable <- c("type")
 
   # On assigne aux variables metadataVariable le nom de colonne internationalisé (utile??)
@@ -75,7 +88,8 @@ mod_welcome <- function(input, output, session){
   }
 
   # Caractéristique de l'ensemble des données
-  caracDataSensor <- caracdata(language)[order(variable)]
+  # Mettre dans une fonction
+  caracDataSensor <- caracdata(pool,language)[order(variable)]
   
   variableCaracData <- c("code_jeu","code_site","code_station","code_site_station","site_nom","theme","datatype","variable","unite","mindate","maxdate","zet_coordonnees_bbox")
   metadataVariable <- c("definition","station_description","site_description","station_nom")
@@ -85,7 +99,7 @@ mod_welcome <- function(input, output, session){
   caracCarto <- unique(caracDataSensor[,c(variableCaracData,metadataSensor),with=FALSE])
 
   # lecture du fichier pour gérer les couleurs
-  col_station <- read.csv("www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
+  col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
   # Sélection de la colonne en fonction de la langue
   col_station <- col_station[,c("datatype","couleur",type)]
   names(col_station) <- c(names(col_station[1:2]),"type")
@@ -94,10 +108,10 @@ mod_welcome <- function(input, output, session){
   outdbcarto <- merge(caracCarto,col_station, by.x = "datatype", by.y = "datatype", all.x = TRUE,all.y=FALSE)
 
   # Création des listes pour la sélection des sites
-  sitesnot <- c(allSite,unique(outdbcarto$site_nom))
+  sitesnot <- c("All peatlands",unique(outdbcarto$site_nom))
 
   output$UIoutputsiteInstru <- renderUI({
-      pickerInput(ns("siteInstru"), translator$t("Tourbières du SNO-T"), sitesnot,selected=allSite,options = list(style = "btn-info"))
+      pickerInput(ns("siteInstru"), translator$t("Tourbières du SNO-T"), sitesnot,selected="All peatlands",options = list(style = "btn-info"))
 })
 
 # Sélection des sites/stations
@@ -125,7 +139,7 @@ outdbcartoDataStation <- reactiveValues()
   observe({
     stationInstru()
     isolate({
-      if(checkinsiteInstru$checked==allSite){
+      if(checkinsiteInstru$checked=="All peatlands"){
         outdbcartoDataStation$mapinstru <- unique(outdbcarto[,list(code_site_station,zet_coordonnees_bbox,station_description,datatype,couleur,type,site_nom)])
         outdbcartoDataStation$optionMap <- TRUE
 
@@ -161,7 +175,7 @@ outdbcartoDataStation <- reactiveValues()
   output$snot_map <- renderLeaflet({
     print("snot_map")
     # Création de la map selon les conditions
-    sensorSelectedMap(outdbcartoDataStation$mapinstru,outdbcartoDataStation$optionMap)  
+    sensorSelectedMap(outdbcartoDataStation$mapinstru,outdbcartoDataStation$optionMap,translator)  
 })
 
   output$tableInstu <- DT::renderDataTable({
@@ -190,7 +204,7 @@ outdbcartoDataStation <- reactiveValues()
       levels(figcarac$variable) <- unique(rev(figcarac$variable))
       figcarac$variable <- with(figcarac,factor(variable,levels=levels(variable)))
      
-      timelineDataAvailable(figcarac,outdbcartoDataStation$optionMap,facetWrapSelected())
+      timelineDataAvailable(figcarac,outdbcartoDataStation$optionMap,facetWrapSelected(),translator)
 
   })# Fin de figure
 }#Fin du module

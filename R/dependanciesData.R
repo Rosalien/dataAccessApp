@@ -1,6 +1,7 @@
 #' @title robustCurl
 #' @description tryCatch
 #' @param x a httr::GET(url)
+#' @importFrom httr GET timeout
 #' @return Error or warning message if httr::GET() don't work
 #' @examples
 #' \dontrun{

@@ -4,7 +4,7 @@
 \alias{googleAnalyticsParameter}
 \title{googleAnalyticsParameter}
 \usage{
-googleAnalyticsParameter(...)
+googleAnalyticsParameter()
 }
 \value{
 String of java script

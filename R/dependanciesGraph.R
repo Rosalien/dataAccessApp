@@ -203,18 +203,19 @@ if(nrow(subsetoutbd)==0){
 }
 
 #' @title timelineDataAvailable
-#' @description Chart of disponibility data (welcome module)
+#' @description Chart of data disponibility (used in mod_welcome)
 #' @param tableCarac data.table from mod_welcome
 #' @param allSite Logical operator to select allSite or not (TRUE, FALSE)
 #' @param facetWrapOption Logical operator to use facetWrap on site or site/station (TRUE, FALSE)
+#' @param translator translator object for translation
 #' @return dygraph of timetrend
 #' @importFrom data.table setDT
 #' @importFrom graphics layout
 #' @importFrom wesanderson wes_palette
-#' @importFrom plotly ggplotly
+#' @importFrom plotly ggplotly layout
 #' @import ggplot2
 #' @export
-timelineDataAvailable <- function(tableCarac,allSite,facetWrapOption){
+timelineDataAvailable <- function(tableCarac,allSite,facetWrapOption,translator){
   keyWord <- c("Soil temperature","Soil water content","Soil heat flux","Température du sol","Teneur en eau du sol","Flux de chaleur dans le sol")
   keyWord <- paste(keyWord,collapse = "|")
   tableCarac[,definition_simple:=ifelse(grepl(keyWord, definition)==TRUE,gsub(paste0("(",keyWord,").*"),"\\1",definition),definition)]
@@ -238,17 +239,18 @@ return(ggplotly(gg,tooltip = c("text"))%>%layout(legend = list(orientation = "h"
 
 }
 
-#' @title timelineDataAvailable
+#' @title sensorSelectedMap
 #' @description Chart of disponibility data (welcome module)
 #' @param tableCarac data.table from mod_welcome
 #' @param allSite Logical operator to select allSite or not (TRUE, FALSE)
 #' @param facetWrapOption Logical operator to use facetWrap on site or site/station (TRUE, FALSE)
+#' @param translator translator object for translation
 #' @return dygraph of timetrend
 #' @importFrom stringr str_extract_all
 #' @import leaflet
 #' @import data.table
 #' @export
-sensorSelectedMap <- function(mapSensorSelected,allSite=FALSE){
+sensorSelectedMap <- function(mapSensorSelected,allSite=FALSE,translator){
 
     # Extraction des coordonnées des stations 
     mapSensorSelected$lng <- matrix(as.numeric(unlist(

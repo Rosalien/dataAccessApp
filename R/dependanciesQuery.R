@@ -7,7 +7,7 @@
 #' @importFrom DBI dbDriver
 #' @import RPostgreSQL
 #' @examples
-#' \dontrun
+#' \dontrun{
 #' pool <- confConnexion("~/SI_SNOT/dbconfProd.yaml")
 #' }
 #' @export
