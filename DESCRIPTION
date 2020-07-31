@@ -1,6 +1,6 @@
 Package: dataAccessApp
 Title: Data Access shiny app
-Version: 0.0.0.9000
+Version: 1.0
 Authors@R: person('Jean-Baptiste', 'Paroissien', email = 'jean-baptiste.paroissien@cnrs-orleans.fr', role = c('cre', 'aut'))
 Description: Shiny App for discover, visualize and extract data from SNO-Tourbieres.
 License: MIT + file LICENSE

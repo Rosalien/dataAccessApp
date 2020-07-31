@@ -13,7 +13,7 @@
 #' @importFrom plotly plotlyOutput renderPlotly
 #' @importFrom DT dataTableOutput datatable renderDataTable
 #' @importFrom leaflet leafletOutput renderLeaflet
-#' @import shinyWidgets
+#' @importFrom shinyWidgets awesomeRadio materialSwitch
 #' @import shinydashboard
 #' 
 mod_welcomeUI <- function(id,translationVariable){
@@ -49,7 +49,7 @@ mod_welcomeUI <- function(id,translationVariable){
       fluidRow(
             box(width=7,
               title = tagList(shiny::icon("table"), translator$t("Données disponibles")),status = "warning",collapsed=TRUE, solidHeader = TRUE,collapsible = TRUE
-              ,withSpinner(dataTableOutput(ns("tableDataDispo")),type=5)
+              ,withSpinner(DT::dataTableOutput(ns("tableDataDispo")),type=5)
             ),
             box(width=5,title = tagList(shiny::icon("chart-bar"), translator$t("Données disponibles")),solidHeader = TRUE,collapsible = TRUE,status = "warning",collapsed=TRUE,
               materialSwitch(inputId = ns("facetWrapOption"),label = translator$t("Détail par site ou station"),value = FALSE,status = "warning")
@@ -59,7 +59,7 @@ mod_welcomeUI <- function(id,translationVariable){
       fluidRow(
             box(width=12,
               title = translator$t("Liste des instruments"),solidHeader = TRUE,status = "danger",collapsed=TRUE,collapsible = TRUE
-              ,withSpinner(dataTableOutput(ns("tableInstu")),type=5)
+              ,withSpinner(DT::dataTableOutput(ns("tableInstu")),type=5)
           )
         )
       )       

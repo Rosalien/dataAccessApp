@@ -11,6 +11,14 @@ multiplot(..., plotlist = NULL, file, cols = 1, layout = NULL)
 }
 \arguments{
 \item{...}{ggplot objects can be passed in ...}
+
+\item{plotlist}{ggplot objects can be passed in ...}
+
+\item{file}{ggplot parameter}
+
+\item{cols}{ggplot parameter}
+
+\item{layout}{ggplot parameter}
 }
 \value{
 ggplots

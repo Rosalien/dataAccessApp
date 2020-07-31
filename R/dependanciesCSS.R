@@ -203,6 +203,10 @@ dyCSScool <- function(dygraph){
 #' then plot 1 will go in the upper left, 2 will go in the upper right, and
 #' 3 will go all the way across the bottom.
 #' @param ... ggplot objects can be passed in ...
+#' @param plotlist ggplot objects can be passed in ...
+#' @param file ggplot parameter
+#' @param cols ggplot parameter
+#' @param layout ggplot parameter
 #' @return ggplots
 #' @import grid
 #' @source https://stackoverflow.com/questions/33867301/dynamic-grid-plots-in-shiny-r
@@ -245,6 +249,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 #' @title grid_arrange_shared_legend
 #' @description Combined ggplots with a common legend
 #' @param ... ggplot objects can be passed in ...
+#' @param nrow ggplot parameter
+#' @param ncol ggplot parameter
+#' @param position legend position ("bottom", "right","top","left")
 #' @return ggplots
 #' @importFrom ggplot2 ggplotGrob
 #' @importFrom ggtern arrangeGrob
@@ -330,31 +337,4 @@ theme(
       strip.background =element_rect(fill="#dbdbd9",color="#dbdbd9"),#0071b7
       strip.text = element_text(size = 10,face = "bold")
     )
-}
-
-#' @title dbselect
-#' @description Create dialog windows to download data in mod_access
-#' @return data.table with average of values by frequenceSelected
-#' @importFrom data.table setDT
-#' @importFrom shiny modalDialog
-#' @importFrom shiny modalButton
-#' @importFrom shiny downloadButton
-#' @importFrom htmltools HTML
-#' @export
-dataModal <- function(failed = FALSE){
-      modalDialog(
-        title = "Licence & conditions d'utilisation des données du SNO-T",
-        span('Sauf mentions contraires, les données du SNO-T sont diffusées sous'),
-        tags$a(href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr", "licence Creative Commons Attribution - Attribution - Partage dans les Mêmes Conditions 4.0 International",target="_blank"),
-        tags$br(),tags$br(),
-        HTML('<center><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a></center>'),
-        tags$hr(),
-        tags$a(href="https://data-snot.cnrs.fr/snot/resources/manual/charte.pdf", "Conditions d'utilisation des données du SNO-T",target="_blank"),
-        checkboxInput(ns("readConfirmation"), i18n()$t("J'accepte les conditions d'utilisation"), FALSE),
-        footer = tagList(
-          modalButton(i18n()$t("Annuler")),
-          downloadButton(ns("downloadData"), i18n()$t("Télécharger"))
-        ),
-        easyClose = TRUE
-      )
 }

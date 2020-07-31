@@ -5,14 +5,16 @@
 #' @return Error or warning message if httr::GET() don't work
 #' @examples
 #' \dontrun{
-#' robustCurl(httr::GET("http://localhost:8081/rest/resources/pivot?codes_jeu=lgt-ges-eddycovariance"),httr::timeout(60)))
+#' robustCurl(httr::GET(
+#' "http://localhost:8081/rest/resources/pivot?codes_jeu=lgt-ges-eddycovariance"),
+#' httr::timeout(60)))
 #' }
 #' @export
 #' 
 robustCurl= function(x) {
     tryCatch(x,
             warning = function(w) {print("warning")},
-            error = function(e) {print("Problème dans la génération de la métadonnée")}) 
+            error = function(e) {print("Problem with creation of metadata")}) 
 }
 
 #' @title createLink
@@ -42,14 +44,6 @@ variableToVariableSimple <- function(x){
   y
 }
 
-#' @title'%!in%'
-#' @description Select opposite of '%in%'
-#' @param dataSelected data.table from mod_accessdata
-#' @return return opposite of '%in%'
-#' @export
-'%!in%' <- function(x,y)!('%in%'(x,y))
-
-
 #' @title loadCaracDataAndCarto
 #' @description Load data caracdata() and create 3 data.table used in application
 #' @param pool data base configuration (from confConnexion function)
@@ -71,7 +65,7 @@ loadCaracDataAndCarto <- function(pool,language){
   caracCartoMethod <- unique(caracDataSensor[,c(variableCaracData,metadataSensor,metadataMethod),with=FALSE])
   caracCarto <- unique(caracDataSensor[,c(variableCaracData,metadataSensor),with=FALSE])
   
-  ## Sélection de la colonne en fonction de la langue
+  ## Select column with language
   col_station <- col_station[,c("datatype","couleur",paste0("type_",language))]
   names(col_station) <- c(names(col_station[1:2]),"type")
 
@@ -82,9 +76,7 @@ loadCaracDataAndCarto <- function(pool,language){
 #' @description Create day and night parameter into 'dataSelected' data.table
 #' @param dataSelected data.table from mod_accessdata
 #' @return day and night parameter into 'dataSelected' data.table
-#' @importFrom data.table setDT
-#' @importFrom data.table rbindlist
-#' @importFrom data.table setkey
+#' @importFrom data.table setDT rbindlist setkey
 #' @importFrom suncalc getSunlightTimes
 #' @export
 #' 
@@ -94,7 +86,7 @@ dbDayNight <- function(dataSelected){
   lon <- c(2.28190054512825,1.4235536727897,-1.18761537116659,6.16955686517857)
   siteCoord <- setDT(data.frame(site,lat,lon))
 
-  # Calcul des paramètres jour/nuit pour chaque site en fonction de leur coordonnées géographiques
+  # Day/Night parameters for each site. Calculate with geographics coordinate
   aggregateDBDayandNight <- rbindlist(lapply(unique(dataSelected$code_site),function(x){
   dataSelectedSite <- dataSelected[code_site %in% x,]
   dataSelectedSite$Date <- as.POSIXct(paste(dataSelectedSite$date,dataSelectedSite$time,sep=" "), "%Y-%m-%d %H:%M:%S",tz="Africa/Algiers")
@@ -104,7 +96,7 @@ dbDayNight <- function(dataSelected){
   setkey(sunSetRiseSeq, date)
   setkey(dataSelectedSite,date)
 
-  # Jointure avec ifelse pour day and night
+  # Merge with ifelse for day and night
   dbDayandNight <- sunSetRiseSeq[dataSelectedSite]
   dbDayandNight[,dayNight:=ifelse(Date > sunrise & Date < sunset, 'day', 'night')]
   }))
@@ -119,12 +111,12 @@ return(aggregateDBDayandNight)
 #' @param siteSelected String of site/station code selected in application (ex. "lgt/ec1" or c("lgt/ec1","lgt/bm1"))
 #' @param variableSelected String of variable code selected in application (ex. "FC" or c("FC","FCH4"))
 #' @return data.table with average of values by frequenceSelected
-#' @importFrom data.table setDT
+#' @importFrom data.table setDT month year
 #' @importFrom dplyr mutate
 #' @export
 #'
 dbselect <- function(db,dayNightSelected,frequenceSelected,siteSelected,variableSelected){
-  # Préparation générale
+  # Average calculation with confidition of frequency (frequenceSelected)
   if(dayNightSelected!="day/night"){
       db <- db[dayNight==dayNightSelected,]
     }else{}
@@ -148,7 +140,7 @@ dbselect <- function(db,dayNightSelected,frequenceSelected,siteSelected,variable
     subsetoutbd[,Date:= as.POSIXct(as.Date(date,"%Y-%m-%d"),tz="Africa/Algiers")]
    }else{}
 
-  # Préparation des variables
+  # 
   subsetoutbd <- subsetoutbd %>% mutate(month = factor(month(Date),1:12,
                                         labels = c("Jan", "Feb", "Mar", "Apr",
                                         "May", "Jun", "Jul", "Aug",
@@ -218,14 +210,14 @@ createFilePivot <- function(data,siteVariable,caracDataset){
   
 lapply(1:nrow(siteVariable),function(x){
 
-      # Sélection du caracDataSet
+      # Selection of caracDataSet
       siteInLoop <- siteVariable[x,code_site_station]
       variableInLoop <- siteVariable[x,variable]
       caracDatasetObservation <- unique(caracDataset[variable %in% variableInLoop & code_site_station %in% siteInLoop,list(code_site,code_station,theme,datatype,variable,titre,zet_coordonnees_bbox,zet_altitude)])
       dataInLoop <- data[code_site_station %in% siteInLoop,c("dateEnd",variableInLoop),with=FALSE]
       dataInLoop <- na.omit(dataInLoop,variableInLoop)
       
-      # Création des variables pour les en-tête (code caduc car autre table utilisée. A conserver car pratique)
+      # Variables header creation (don't used)
       #patternPath <- "^(.*)\\/(.*),(.*),(.*),(.*)-(.*)-(.*)-(.*)"
       #resRegex <- strapply(caracDatasetObservation$path, patternPath, c)[[1]]
       dateExtraction <- format(Sys.Date(), format='%Y-%m-%dT%H:%M:%SZ')
@@ -242,14 +234,14 @@ lapply(1:nrow(siteVariable),function(x){
       altitude <- caracDatasetObservation[,zet_altitude]
       fileName <- paste("TOUR_OBS_",observationId,".txt",sep="")
 
-      #Construction de l'en-tête
+      # Build header
       header <- paste("Date_of_Extraction;",dateExtraction,"\n",
         "Observation_ID;",observationId,"\n",
         "Dataset_title;",datasetTitle,"\n",
         "Variable_name;",variableInLoop,sep="")
 
       print(header[1])
-      # Création de la table
+      # Build table
       valueVariable <- dataInLoop[,list(dateEnd)]
       valueVariable$value <- dataInLoop[,variableInLoop,with=FALSE]
       valueVariable$dateBeg <- NA
@@ -264,12 +256,17 @@ lapply(1:nrow(siteVariable),function(x){
 })
 }
 
-#' @title writeHeaderPivot
-#' @description Create a file in Pivot/TheiaOzcar format
-#' @return Write a file in Pivot/TheiaOzcar format 
+#' @title writeHeaderFile
+#' @description Create a file with header
+#' @param ... option for write.table
+#' @param x data.frame or data.table
+#' @param file String of file name
+#' @param header String of header
+#' @param f to write the file
+#' @return Write a file
 #' @export
 #'
-writeHeaderPivot <- function(x, file, header, f = write.csv, ...){
+writeHeaderFile<- function(x, file, header, f = write.csv, ...){
 # create and open the file connection
   datafile <- file(file, open = 'wt')
 # close on exit

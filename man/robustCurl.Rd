@@ -17,6 +17,8 @@ tryCatch
 }
 \examples{
 \dontrun{
-robustCurl(httr::GET("http://localhost:8081/rest/resources/pivot?codes_jeu=lgt-ges-eddycovariance"),httr::timeout(60)))
+robustCurl(httr::GET(
+"http://localhost:8081/rest/resources/pivot?codes_jeu=lgt-ges-eddycovariance"),
+httr::timeout(60)))
 }
 }

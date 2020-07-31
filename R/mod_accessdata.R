@@ -13,11 +13,12 @@
 #' @importFrom plotly plotlyOutput
 #' @importFrom DT dataTableOutput datatable renderDataTable
 #' @importFrom leaflet leafletOutput renderLeaflet
-#' @import shinyWidgets
+#' @importFrom shinyWidgets awesomeRadio dropdownButton pickerInput actionBttn radioGroupButtons
 #' @importFrom shinyalert useShinyalert
 #' @importFrom rintrojs introjsUI introBox hintjs introjs
+#' @importFrom data.table setkeyv setDT
 #' @import esquisse
-#' @import shinyjs
+#' @importFrom shinyjs alert toggleState show
 #' @import shinydashboard
 #' 
 mod_accessdataUI <- function(id,translationVariable){
@@ -28,20 +29,20 @@ mod_accessdataUI <- function(id,translationVariable){
   translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
 
-  # Pour mettre des checkboxs sur différentes colonnes
+  # Checkbocks on multi-column
   tweaks <- list(tags$head(tags$style(HTML(tweaks2()))))
   
-  # Chargement des données 
+  # Load data
   caracData <- caracdata(pool,language)[order(variable),]
 
-  # Création de plusieurs listes pour l'internatinoalisation
+  # List link to language
   choicesDayNight <- c("day/night","day","night")
   names(choicesDayNight) <- c(translator$t("Jour & Nuit"),translator$t("Jour"),translator$t("Nuit"))
 
   choicesFrequence <- c("30 min", "hour","day","week","month","year")
   names(choicesFrequence) <- c(translator$t("Infra-jour"),translator$t("Heure"),translator$t("Jour"),translator$t("Semaine"),translator$t("Mois"),translator$t("Année"))
 
-# Fonction pour générer des checkboxGroupInput à la volée 
+# To create checkboxGroupInput 
 dropdowSelectionStation <- function(caracDataStationSelection,nameNS){
   if(nrow(caracDataStationSelection)>0){
     lapply(1:length(unique(caracDataStationSelection$site_nom)),function(x){
@@ -55,7 +56,7 @@ dropdowSelectionStation <- function(caracDataStationSelection,nameNS){
 tabPanel(translator$t("Accès aux données"),
          tags$head(tags$style(HTML("hr {border-top: 1px solid #ecf0f1;}"))),
          tags$head(tags$style(HTML('#run{background-color:orange}'))),
-         tags$head(HTML(googleAnalyticsParameter())),
+#         tags$head(HTML(googleAnalyticsParameter())),
          tags$script(HTML("$(document).one('shiny:idle',function() {ga('set','userId', Shiny.user);});")),
   fluidPage(
     introjsUI(),
@@ -115,7 +116,6 @@ tabPanel(translator$t("Accès aux données"),
               checkboxGroupInput(ns("variableEC"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL),
               checkboxGroupInput(ns("variableChambres"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)),
             column(3,checkboxGroupInput(ns("variableBM"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)),
-              #checkboxInput(ns("variableWindRose"),label=translator$t("Rose des vents"),value=NULL)),
             column(4,
               fluidPage(tweaks,fluidRow(column(width = 8, list(NULL,tags$div(align = 'left',class = 'multicol',
                 checkboxGroupInput(ns("variableTS"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)))))),
@@ -168,21 +168,20 @@ tabPanel(translator$t("Accès aux données"),
               title = p(icon("map"),translator$t("Carte des stations")),solidHeader = TRUE,collapsible = TRUE,collapsed=FALSE,status = "primary"
               ,leafletOutput(ns("sensorMap"))),
               box(title = p(icon("table"),translator$t("Description des variables")),width=7,collapsible = TRUE,collapsed=FALSE,solidHeader = TRUE,status = "primary"
-              ,dataTableOutput(ns("tableData")))
+              ,DT::dataTableOutput(ns("tableData")))
               ),
             fluidRow(
               box(title = p(icon("table"),translator$t("Instruments & Méthodes")),width=12,collapsible = TRUE,collapsed=TRUE,solidHeader = TRUE,status = "warning"
-              ,dataTableOutput(ns("tableSensor")))
+              ,DT::dataTableOutput(ns("tableSensor")))
               )
               ),
           tabPanel(p(icon("table"),translator$t("Données")),
-            withSpinner(dataTableOutput(ns("Data")),type=5)),                       
+            withSpinner(DT::dataTableOutput(ns("Data")),type=5)),                       
           tabPanel(p(icon("line-chart"),translator$t("Série temporelle")),
             withSpinner(uiOutput(ns("timetrendSNOT")),type=5)),
-            #withSpinner(plotOutput(ns("windRoseggplotSite")),type=5)),
           tabPanel(p(icon("calculator"),translator$t("Statistiques")),
             checkboxGroupInput(ns('facetWrapOption1'),label=translator$t("Détail par"),inline=TRUE,choices = c("month","season","year","dayNight"),selected=NULL),
-            withSpinner(dataTableOutput(ns("SummaryData")),type=5)# end of "chart" tab panel
+            withSpinner(DT::dataTableOutput(ns("SummaryData")),type=5)# end of "chart" tab panel
             ),
           tabPanel(p(icon("chart-bar"),translator$t("Construire un graphique")),
                     esquisserUI(id = ns("esquisse"),header = FALSE,choose_data = FALSE)
@@ -227,8 +226,8 @@ tabPanel(translator$t("Accès aux données"),
               ),
             hr(),
             tabBox(width=12,
-              tabPanel(title=translator$t("Sélection des données pour le téléchargement"),dataTableOutput(ns("Recap"))),
-              tabPanel(title="DOI & Citations",dataTableOutput(ns("Citation")),dataTableOutput(ns("underCitation")))
+              tabPanel(title=translator$t("Sélection des données pour le téléchargement"),DT::dataTableOutput(ns("Recap"))),
+              tabPanel(title="DOI & Citations",DT::dataTableOutput(ns("Citation")),DT::dataTableOutput(ns("underCitation")))
               )
             )#tabpanel
         )#tabset
@@ -247,36 +246,30 @@ mod_accessdata <- function(input, output, session,translationVariable){
   my_wd <- getwd()
   ns <- session$ns
 
-##################################Paramètres de connexion et langue####################################
-
+#Database connexion and language selection
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
   translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
   
-##################################Chargement des données####################################
-
+# Load data
   loadData <- loadCaracDataAndCarto(pool,language)
   caracData <- loadData[[1]]
   caracCarto <- loadData[[3]]
   col_station <- loadData[[4]]
 
-############################################################################################
-
-################################################Help####################################
-
+#Help
 hintjs(session, options = list("hintButtonLabel"="Hope this hint was helpful"),
          events = list("onhintclose"=I('alert("Wasn\'t that hint helpful")')))
 
 
 # Help button start introjs when button is pressed with custom options and events
 observeEvent(input$starthelp,
-               introjs(session, options = list("nextLabel"=i18n()$t("Suivant"),
-                                               "prevLabel"=i18n()$t("Précédent"),
-                                               "skipLabel"=i18n()$t("Annuler")))
+               introjs(session, options = list("nextLabel"=translator$t("Suivant"),
+                                               "prevLabel"=translator$t("Précédent"),
+                                               "skipLabel"=translator$t("Annuler")))
                                 #events = list("oncomplete"=I('alert("Glad that is over")')))
   )
-############################################################################################
 
 observeEvent(input$videoChart, {
     show_alert(
@@ -309,7 +302,7 @@ observeEvent(input$videoDataAccess, {
 
 ################################################renderUI####################################
 
-# renderUI pour les fréquences
+# renderUI for frequencies
 output$frequenceHoraire <- renderUI({
   numericInput(ns("hour"),label=h5(tags$b("")),value=1,min = 1, max = 23,step=1)
 })
@@ -323,98 +316,97 @@ output$frequenceAnnuelle <- renderUI({
 })
 #
 
-# renderUI pour afficher la période min et max des sites sélectionnés.
-# Filtre sur caracData avec la reactive siteSelectedVariable()
+# renderUI to display min and max period on site selected
+## Filter on caracData with reactive siteSelectedVariable()
 output$minmaxdateSNOT <- renderUI({
   minmaxdate <- caracData[code_site_station %in% siteSelectedVariable(),c(min(mindate,na.rm=TRUE),max(maxdate,na.rm=TRUE))]
-  dateRangeInput(ns("dateSNOT"),i18n()$t("Période"),min = minmaxdate[1],max = minmaxdate[2],start = as.Date(minmaxdate[1],"%Y-%m-%d"),
-                 end = as.Date(minmaxdate[2],"%Y-%m-%d"),format = "dd-mm-yyyy",language=language,separator = i18n()$t("au"))
+  dateRangeInput(ns("dateSNOT"),translator$t("Période"),min = minmaxdate[1],max = minmaxdate[2],start = as.Date(minmaxdate[1],"%Y-%m-%d"),
+                 end = as.Date(minmaxdate[2],"%Y-%m-%d"),format = "dd-mm-yyyy",language=language,separator = translator$t("au"))
 })
 
-# renderUI pour les tables récapitulatifs des paramètres sélectionnés
+# renderUI recap table of parameters selected
   output$captionRecap <- renderUI({
     captionRecap()
   })
 
-# renderUI pour les dy_graph
-# Construction décomposée pour l'affichage des messages
+# renderUI for time series dy_graph
 output$timetrendSNOT <- renderUI({
-      withProgress(message = i18n()$t("Préparation des données ..."),{
+      withProgress(message = translator$t("Préparation des données ..."),{
         
-        incProgress(0.5,i18n()$t("Requête de la base de données ..."))       
+        incProgress(0.5,translator$t("Requête de la base de données ..."))       
         
-        # Requête sur les données   
+        # Query on data
         subsetoutbdSNOT <- sqlOutputAndAggregateMean()
 
-        incProgress(0.3,i18n()$t("Préparation du graphique ..."))
-        dy_graphSite <- dygraphSite(subsetoutbdSNOT[(grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==FALSE) & subsetoutbdSNOT$variable %!in% c("WTD","TW","GPP","RE","NEE"),],frequenceSelected())
+        incProgress(0.3,translator$t("Préparation du graphique ..."))
+        dy_graphSite <- dygraphSite(subsetoutbdSNOT[(grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==FALSE) & !(subsetoutbdSNOT$variable %in% c("WTD","TW","GPP","RE","NEE")),],frequenceSelected())
         dy_graphTypeVariable <- dygraphTypeVariable(subsetoutbdSNOT[grepl("SWC_|TS_|G_|ETR|FC|H|LE|FCH4", subsetoutbdSNOT$variable)==TRUE,],frequenceSelected())       
         dy_graphChambrePiezo <- dygraphPiezo(subsetoutbdSNOT[subsetoutbdSNOT$variable %in% c("GPP","RE","NEE","TW","WTD"),],frequenceSelected())
-        incProgress(0.1,i18n()$t("Finalisation ..."))
+        incProgress(0.1,translator$t("Finalisation ..."))
 
         tagList(dy_graphSite,dy_graphTypeVariable,dy_graphChambrePiezo)
       })
 })
 
-# renderUI pour la création de la carte des stations sélectionnées
+# renderUI to display a map for stations selected
   output$sensorMap <- renderLeaflet({
     mapSensorSelected <- unique(caracCarto[code_site_station %in% siteSelectedVariable(),
                                 list(code_site_station,zet_coordonnees_bbox,station_description,datatype)])
-    # Ajout des couleurs pour les types de stations
+    # Add colors for stations types
     mapSensorSelected <- merge(mapSensorSelected, col_station, by.x = "datatype", by.y = "datatype", all.x = TRUE,all.y=FALSE)
 
     validate(
       need(nrow(mapSensorSelected)>0,translator$t("Sélectionner une station et/ou un piézomètre et/ou une chambre"))
       )
 
-    # Création de la map
+    # Map creation
     sensorSelectedMap(mapSensorSelected,FALSE,translator)
 })
 
-# renderUI pour la table de description des variables sélectionnées
+# renderUI for description table of variables selected
   output$tableData <- DT::renderDataTable({
     descriptionData <- unique(caracData[code_site_station %in% siteSelected() & variable %in% variableSelected(),list(code_site_station,station_description,variable,definition,unite)])
-    names(descriptionData) <- c("Site/Station","Station","Variable","Description",i18n()$t("Unité"))
+    names(descriptionData) <- c("Site/Station","Station","Variable","Description",translator$t("Unité"))
     
     retData <- DT::datatable(descriptionData,extensions = 'Buttons',rownames= FALSE,filter = 'top',
       options = list(dom = 'tip',pageLength = 10, autoWidth = TRUE))
     return(retData)
 })#
 
-# renderUI pour les instruments et les variables
+# renderUI for sensors and variables
   output$tableSensor <- DT::renderDataTable({
     tableSensor <- recapTable()[,list(code_site_station,station_nom,variable,instrument,description_capteur,zet_coordonnees_bbox,description_methode)]
-    names(tableSensor) <- c("Site/Station","Station","Variable",i18n()$t("Instrument"),"Description","Coord",i18n()$t("Méthode"))
+    names(tableSensor) <- c("Site/Station","Station","Variable",translator$t("Instrument"),"Description","Coord",translator$t("Méthode"))
     
     retData <- DT::datatable(tableSensor,extensions = 'Buttons',rownames= FALSE,filter = 'top',
       options = list(dom = 'tip',pageLength = 10, autoWidth = TRUE))
     return(retData)
 })#
 
-# renderUI pour voir les données
+# renderUI to see data
   output$Data <- DT::renderDataTable({
-    withProgress(message = i18n()$t("Préparation des données ..."),{
-      incProgress(0.7,i18n()$t("Préparation de la table ..."))       
+    withProgress(message = translator$t("Préparation des données ..."),{
+      incProgress(0.7,translator$t("Préparation de la table ..."))       
       tableData <- sqlOutputAndAggregateMean()[,list(code_site_station,Date,variable,definition,value)]
       retData <- DT::datatable(tableData,rownames= FALSE,filter = 'top')
-      incProgress(0.3,i18n()$t("Fin de la préparation de la table ..."))       
+      incProgress(0.3,translator$t("Fin de la préparation de la table ..."))       
     })
     return(retData)
 })#
 
-# renderUI pour faire la synthèse de la requête avant le téléchargement
+# renderUI to make a synthesis of queryr before download
   output$Recap <- DT::renderDataTable({
     recapTableDownload <- unique(recapTable()[,list(code_jeu,site_nom,station_nom,variable,definition,unite)])
-    names(recapTableDownload) <- c(i18n()$t("Jeu de données"),"Site","Station","Variable","Description",i18n()$t("Unité"))
+    names(recapTableDownload) <- c(translator$t("Jeu de données"),"Site","Station","Variable","Description",translator$t("Unité"))
     retData <- DT::datatable(recapTableDownload,escape = FALSE,rownames= FALSE, 
                 #caption = htmltools::tags$caption(
                   #style = 'caption-side: top; text-align: center;',
-                  #htmltools::strong(i18n()$t("Sélection des données pour le téléchargement"))),
+                  #htmltools::strong(translator$t("Sélection des données pour le téléchargement"))),
               options = list(dom = 'tip',pageLength = 10, autoWidth = TRUE))
     return(retData)   
 })#
 
-# renderUI pour la synthèse des citations principales
+# renderUI for citations
   output$Citation <- DT::renderDataTable({
     CodeJeu <- unique(recapTable()[,code_jeu])
     Jeu <- tableJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
@@ -429,51 +421,42 @@ output$timetrendSNOT <- renderUI({
             Jeu[x,citation:="No citation, please add the sentence presented above in 'How to cite ?' box"]
           }
     })
-    names(Jeu) <- c(i18n()$t("Jeu de données"),i18n()$t("DOI de toutes les versions"),"Citation")
+    names(Jeu) <- c(translator$t("Jeu de données"),translator$t("DOI de toutes les versions"),"Citation")
     retData <- DT::datatable(Jeu,escape = FALSE,rownames= FALSE, 
                 caption = htmltools::tags$caption(
                   style = 'caption-side: top; text-align: center;',
-                  htmltools::strong(i18n()$t("DOI et citations pour des jeux de données du SNO-Tourbières"))),
+                  htmltools::strong(translator$t("DOI et citations pour des jeux de données du SNO-Tourbières"))),
               options = list(dom = 'tip',pageLength = 10, autoWidth = TRUE))
     return(retData)
 })#
 
-# renderUI pour la synthèse des citations des sous-jeux de données
+# renderUI for citations for sub-dataset
 output$underCitation <- DT::renderDataTable({
     CodeJeu <- unique(recapTable()[,code_jeu])
     SousJeu <- tableSousJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation,date_debut,date_fin)] 
-    names(SousJeu) <- c(i18n()$t("Fait partie de ce jeu de données"),"DOI","Citation",i18n()$t("Début"),i18n()$t("Fin"))
+    names(SousJeu) <- c(translator$t("Fait partie de ce jeu de données"),"DOI","Citation",translator$t("Début"),translator$t("Fin"))
     SousJeu$DOI <- createLink(paste0("http://dx.doi.org/",SousJeu$DOI))
     retData <- DT::datatable(SousJeu,escape = FALSE,rownames= FALSE,
                 caption = htmltools::tags$caption(
                   style = 'caption-side: top; text-align: center;',
-                  htmltools::strong(i18n()$t("DOI et citations pour les sous-jeux de données du SNO-Tourbières"))),
+                  htmltools::strong(translator$t("DOI et citations pour les sous-jeux de données du SNO-Tourbières"))),
               options = list(dom = 'tip',pageLength = 10, autoWidth = TRUE))
     return(retData)
 })#
 
-# Rose des vents
-    #output$windRoseggplotSite <- renderPlot({
-      #if(WindRose()==TRUE){
-        #subsetoutbdSNOT <- sqlOutputSiteStationWind
-        #windRose <- graphWindRose(sqlOutputSiteStationWind())
-        #do.call(grid_arrange_shared_legend,c(windRose,list(position="right")))
-      #}else{}
-#})
-
-# renderUI pour la construction des graphiques à façon
+# renderUI for esquisse module
  data_r <- reactiveValues(data=iris,name="dataSNOT")
   
   observeEvent(go(), {
-        withProgress(message = i18n()$t("Préparation des données ..."),{
-        incProgress(0.5,i18n()$t("Requête de la base de données ..."))    
+        withProgress(message = translator$t("Préparation des données ..."),{
+        incProgress(0.5,translator$t("Requête de la base de données ..."))    
         data_r$data <- sqlOutputAndAggregate()[,list(Date,code_site_station,value,variable,dayNight,month,season,year)]
       })
   })
 
  result <- callModule(module = esquisserServer,id = "esquisse",data = data_r)
 
-# renderUI pour les stats sur les données
+# renderUI for data stats
   output$SummaryData <- DT::renderDataTable({
 
         if(!is.null(facetWrapSelectedTable())){
@@ -486,7 +469,7 @@ output$underCitation <- DT::renderDataTable({
                                  Max=round(max(value, na.rm=TRUE),2),
                                  sd=round(sd(value, na.rm = TRUE),2)),
                                  by=c('variable','code_site_station',facetWrapSelectedTable())]
-          names(retData) <- c("Variable","Site/Station",facetWrapSelectedTable(),"Min","Q1",i18n()$t("Médiane"),i18n()$t("Moyenne"),"Q3","Max",i18n()$t("Écart-type"))                      
+          names(retData) <- c("Variable","Site/Station",facetWrapSelectedTable(),"Min","Q1",translator$t("Médiane"),translator$t("Moyenne"),"Q3","Max",translator$t("Écart-type"))                      
         }else{
           #print("else#448")
           retData <- sqlOutputAndAggregate()[,list(Min=round(min(value,na.rm=TRUE),2),
@@ -497,42 +480,27 @@ output$underCitation <- DT::renderDataTable({
                                  Max=round(max(value, na.rm=TRUE),2),
                                  sd=round(sd(value, na.rm = TRUE),2)),
                                  by=c('variable','code_site_station')]
-          names(retData) <- c("Variable","Site/Station","Min","Q1",i18n()$t("Médiane"),i18n()$t("Moyenne"),"Q3","Max",i18n()$t("Écart-type"))                      
+          names(retData) <- c("Variable","Site/Station","Min","Q1",translator$t("Médiane"),translator$t("Moyenne"),"Q3","Max",translator$t("Écart-type"))                      
         }
-        retData <- DT::datatable(retData, rownames= FALSE,caption = htmltools::tags$caption(i18n()$t("Statistiques descriptives"),
+        retData <- DT::datatable(retData, rownames= FALSE,caption = htmltools::tags$caption(translator$t("Statistiques descriptives"),
           style='font-weight:bold; color:#333'), extensions = 'Buttons',filter = 'top',
           options = list(dom = "Blfrtip", buttons = list("copy",list(extend = "collection", buttons = c("csv", "excel", "pdf"),text = "Download")),
                     pageLength = 10, autoWidth = TRUE))
   return(retData)
 })#
 
-################################################Fin des renderUI####################################
+################################################End of renderUI####################################
 
 
 ################################################Reactive et Observe####################################
-
-# Reactive pour le changement de langue, en test pour le moment
-i18n <- reactive({
-  selectedLanguage <- "en"#input$selected_language
-  translator$set_translation_language(selectedLanguage)
-  print(selectedLanguage)
-  translator
-})
-
-# obserEvent sur le rafraichissement de la page
-#observeEvent(input$refresh, {
-      #shinyjs::reset("form")
-#})
-
-# eventReactive pour la sélection de la période de temps.
-# Utilisée pour les graphes, les tables et les extractions
+# eventReactive to select period (used for chart, table and extraction)
 periodeSelected <- eventReactive(go(),{
   periode <- c(input$dateSNOT[1],input$dateSNOT[2])
-  validate(need(!is.null(periode),i18n()$t("Veuillez sélectionner une période")))
+  validate(need(!is.null(periode),translator$t("Veuillez sélectionner une période")))
   periode
 })
 
-# Reactive utilisée uniquement pour mettre à jour la liste des variables dans les widgets
+# Reactive only used to update list of variable in widgets
 siteSelectedVariable <- reactive({
   site <- c(input$siteSNOT_1,input$siteSNOT_2,input$siteSNOT_3,input$siteSNOT_4,
     input$sitePiezo_1,input$sitePiezo_2,input$sitePiezo_3,input$sitePiezo_4,
@@ -540,7 +508,7 @@ siteSelectedVariable <- reactive({
   site
 })
 
-# Reactive pour mettre à jour la sélection globale
+# Reactive to update global selection
   go <- reactive({
     go <- input$go0
     go
@@ -551,27 +519,27 @@ siteSelected <- eventReactive(go(),{
   site <- c(input$siteSNOT_1,input$siteSNOT_2,input$siteSNOT_3,input$siteSNOT_4,
     input$sitePiezo_1,input$sitePiezo_2,input$sitePiezo_3,input$sitePiezo_4,
     input$siteChambre_1,input$siteChambre_2,input$siteChambre_3,input$siteChambre_4)
-  validate(need(!is.null(site),i18n()$t("Veuillez sélectionner une station de mesure ou un piézomètre")))
+  validate(need(!is.null(site),translator$t("Veuillez sélectionner une station de mesure ou un piézomètre")))
   site
 })
 
-# eventReactive pour mettre à jour les variables sélectionnées
+# eventReactive to update variable selected
 variableSelected <- eventReactive(go(),{
     variables <- c(input$variableEC,input$variableChambres,input$variableSWC,input$variableG,input$variableTS,input$variableBM,input$variableWTD,input$variableBiogeo)
-    validate(need(!is.null(variables),i18n()$t("Aucune variable sélectionnée. Veuillez sélectionner au moins une station et variable")))
+    validate(need(!is.null(variables),translator$t("Aucune variable sélectionnée. Veuillez sélectionner au moins une station et variable")))
     variables
   })
 
-# reactiveValues pour les variables checkées
+# reactiveValues for checked variables
 variableChecked<- reactiveValues(checked=NULL)
 
-# Reactive pour mettre à jour la fréquence
+# Reactive to update frequency
 updateFrequence <- reactive({
     updatefrequence <- input$updatefrequence0
     updateFrequence
 })  
 
-# eventReactive sur les fréquences sélectionnées
+# eventReactive for frequency selected
 frequenceSelected <- eventReactive(updateFrequence(),{
   if(input$frequenceSNOT=="hour"){
     frequence <- paste(input$hour," hour",sep="")   
@@ -587,7 +555,7 @@ frequenceSelected <- eventReactive(updateFrequence(),{
 return(frequence)
 })
 
-# observeEvent pour mettre à jour les variables checkées
+# observeEvent to update checked variables
   observeEvent(go(),{
     variables <- c(input$variableEC,input$variableChambres,input$variableSWC,input$variableG,input$variableTS,input$variableBM,input$variableWTD,input$variableBiogeo)
     if(!is.null(variables)){
@@ -595,59 +563,54 @@ return(frequence)
     }
 })
 
-# eventReactive lié au bouton de mise à jour fréquence/dayNight
+# eventReactive link to update-button of frequency/dayNight
 dayNightSelected <- eventReactive(updateFrequence(),{
   dayNightOption <- input$dayNight
   print(paste0("input$dayNight : ",input$dayNight))
   dayNightOption
 })
 
-# reactive pour le croisement des données de la table stats
+# reactive to facetWrap option of stat table
 facetWrapSelectedTable <- reactive({
     input$facetWrapOption1
 })
 
-# reactive pour le croisement des données des boxplots
-#facetWrapSelectedChart <- reactive({
-#    input$facetWrapOption2
-#})
-
-# Désactivation du bouton télécharger si aucune variable est sélectionnée
+# Deactivate download button when no variable selected
   observe({
     toggleState("downloadDataConfirmation", condition = !is.null(variableChecked$checked))
 })
 
-# Désactivation du téléchargement si le bouton confirmation n'est pas sélectionné
+# Deactivate download button if confirm button is not selected
   observeEvent(input$readConfirmation,{
     toggleState("downloadData", condition = (input$readConfirmation==TRUE))
 })
 
-# Reactive pour récapituler la sélection
+# Reactive for display a synthesis of the selection
   captionRecap <- reactive({
     caption <- paste0("Date : ",format(periodeSelected()[1],"%d-%m-%Y")," to ",format(periodeSelected()[2],"%d-%m-%Y"),
       " | Frequency : ",frequenceSelected()," | Type of day : ",dayNightSelected(), " | Sites/Stations : ",paste0(siteSelected(),collapse=", "), "| Variables : ",paste0(variableSelected(),collapse=", "))
     h5(style="color:#feab3a",HTML("<b>Summary of selection : </b>"),caption)
 })
 
-# Reactive pour construire une table récapitulative avant téléchargement
+# Reactive to build a synthesis table before download
   recapTable <- reactive({
     recapTable <- unique(caracData[code_site_station %in% siteSelected() & variable %in% variableSelected(),])
     caracCarto[recapTable]
 })
 
-# eventReactive pour lancer la requête + jointure uniquement si on clique sur 'update selection'
+# eventReactive for run query + merge if clic on 'update selection'
   sqlOutputQuery <- eventReactive(go(),{
     print("Debut queryDataSNOT")
-    # Lancement de la requête + melt des données
+    # Run query + melt on data
     meltvalue <- queryDataSNOT(pool,variableSelected(),siteSelected(),periodeSelected())
-    validate(need(nrow(meltvalue)>0,i18n()$t("Période d'analyse sans données")))
+    validate(need(nrow(meltvalue)>0,translator$t("Période d'analyse sans données")))
     print("Fin queryDataSNOT")
     print("Jointure avec caracData")
-    # Jointure avec data.table (caracData[meltvalue])
+    # Merge with data.table (caracData[meltvalue])
     caracData[meltvalue]
 })
 
-# Reactive pour la requête sql + aggrégation
+# Reactive for sql query + aggregate
   sqlOutputAndAggregate <- reactive({
     print("---------Début sqlOutputAndAggregate ---------")
     print(paste0("dayNightSelected : ",dayNightSelected()))
@@ -655,7 +618,7 @@ facetWrapSelectedTable <- reactive({
     print(paste0("siteSelected : ",siteSelected()))
     print(paste0("variableSelected : ",variableSelected()))
    
-    # Données issues de la requête
+    # Data from query
     dataSNOT <- sqlOutputQuery()
     
     dbDayandNight <- dbDayNight(dataSNOT)
@@ -665,13 +628,11 @@ facetWrapSelectedTable <- reactive({
     dbDayandNightSelect
   })
 
-# Reactive pour la requête sql + aggrégation + Moyenne des valeurs day et night
-# (Utilisée pour l'extraction et les timeseries)
-  # Controler cette reactive
+# Reactive for sql query + aggregate + average day/night values (Used for extraction and dygrah)
   sqlOutputAndAggregateMean <- reactive({
     print("---------Lancement sqlOutputAndAggregateMean ---------")
     subsetoutbdAggregate <- sqlOutputAndAggregate()
-    # Calcul de la moyenne des valeurs dans le cas dayNightSelected()=="day/night"
+    # Average calculation in case dayNightSelected()=="day/night"
         if(dayNightSelected()=="day/night"){
           subsetoutbdSNOT <- subsetoutbdAggregate[variable !="P_1_1_1",.(value = mean(value,na.rm=TRUE)), by = list(Date,variable,code_site_station,unite,definition,station_description,site_description,station_nom,site_nom)]
           subsetoutbdSNOT <- rbind(subsetoutbdSNOT,subsetoutbdAggregate[variable=="P_1_1_1" & complete.cases(value),.(value = sum(value,na.rm=TRUE)), by = list(Date,variable,code_site_station,unite,definition,station_description,site_description,station_nom,site_nom)])  
@@ -682,56 +643,29 @@ facetWrapSelectedTable <- reactive({
     subsetoutbdSNOT
   })
 
-# Reactive pour sélectionner les variable de construction de la rose des vents
-#  sqlOutputSiteStationWind <- reactive({
-    #variableSelected <- c("WD_1_1_1","WS_1_1_1")
-
-    # Lancement de la requête
-    #meltvalue <- queryDataSNOT(pool,variableSelected,siteSelected(),periodeSelected())
-    #validate(need(nrow(meltvalue)>0,"Période d'analyse sans données"))
-
-    # Jointure avec data.table (caracData[meltvalue])
-#    dataSelected <- caracData[meltvalue]
-
- #   valuecarac <- dbselect(dataSelected,dayNightSelected(),frequenceSelected(),siteSelected(),variableSelected)
-  #  return(valuecarac)
-#})#
-
 dataModal <- function(failed = FALSE){
       modalDialog(
-        title = i18n()$t("Licence & conditions d'utilisation des données du SNO-T"),
-        span(paste0(i18n()$t('Sauf mentions contraires'),', ',i18n()$t('les données du SNO-T sont diffusées sous'))),
+        title = translator$t("Licence & conditions d'utilisation des données du SNO-T"),
+        span(paste0(translator$t('Sauf mentions contraires'),', ',translator$t('les données du SNO-T sont diffusées sous'))),
         tags$a(href=paste0("https://creativecommons.org/licenses/by-sa/4.0/deed.",language), "License: CC BY 4.0",target="_blank"),
         tags$br(),tags$br(),
         HTML('<center><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a></center>'),
         tags$hr(),
-        tags$a(href="https://data-snot.cnrs.fr/snot/resources/manual/charte.pdf", i18n()$t("Conditions d'utilisation des données du SNO-T"),target="_blank"),
-        checkboxInput(ns("readConfirmation"), i18n()$t("J'accepte les conditions d'utilisation"), FALSE),
+        tags$a(href="https://data-snot.cnrs.fr/snot/resources/manual/charte.pdf", translator$t("Conditions d'utilisation des données du SNO-T"),target="_blank"),
+        checkboxInput(ns("readConfirmation"), translator$t("J'accepte les conditions d'utilisation"), FALSE),
         footer = tagList(
-          modalButton(i18n()$t("Annuler")),
-          downloadButton(ns("downloadData"), i18n()$t("Télécharger"))
+          modalButton(translator$t("Annuler")),
+          downloadButton(ns("downloadData"), translator$t("Télécharger"))
         ),
         easyClose = TRUE
       )
 }
 
-# observeEvent pour viusalier les conditions de téléchargement lorsqu'on clique sur le bouton
+# observeEvent to display condition when clic on download button
     observeEvent(input$downloadDataConfirmation, {
       showModal(dataModal())
     })
-
-# Reactive pour construire les métadonnées
-  metadata_jeu <- reactive({
-    # Construction du code Jeu avec caracData
-    CodeJeu <- unique(caracData[code_site_station %in% siteSelected() & variable %in% variableSelected(),gsub("_[^_]+$","",code_jeu)])
-
-    # Lancement de la requête curl pour chaque jdd
-    lapply(CodeJeu,function(x){
-      pivot_metadata <- robustCurl(httr::GET(paste("http://localhost:8081/rest/resources/pivot?codes_jeu=",x,sep=""),httr::timeout(60)))
-      pivot_metadata <- ifelse((is.character(pivot_metadata))||(pivot_metadata$status_code==404),"Problème dans la génération des métadonnées",jsonlite::prettify(rawToChar(pivot_metadata$content)))
-  })
-})#
-################################################Fin Reactive et Observe####################################
+################################################End Reactive et Observe####################################
 
 
 ######################################Construction des checkin variables####################################
@@ -751,15 +685,14 @@ checkinEC <- reactiveValues(checked = NULL)
   observe({ 
     listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & grepl("ec1", caracData$code_site_station)==TRUE,list(variable,definition)])
     updateCheckboxGroupInput(session,
-                         "variableEC", i18n()$t("Flux de GES par eddy-covariance"),
+                         "variableEC", translator$t("Flux de GES par eddy-covariance"),
                          choiceValues = listVariables$variable,
                          choiceNames = listVariables$definition,
                          selected = checkinEC$checked)
  })
 #########################################################################################
-# Liste des variables des chambres
+# List of chambers variables
 checkinChambre <- reactiveValues(checked = NULL)
-# Variables piezo
   observe({
     input$variableChambres
     isolate({
@@ -772,7 +705,7 @@ checkinChambre <- reactiveValues(checked = NULL)
   observe({ 
     listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & grepl("ch", caracData$code_site_station)==TRUE & grepl("ER|NEE|GPP", caracData$variable)==TRUE,list(variable,definition)])
       updateCheckboxGroupInput(session,
-                           "variableChambres", i18n()$t("Flux de GES dans les chambres"),
+                           "variableChambres", translator$t("Flux de GES dans les chambres"),
                            choiceValues = listVariables$variable,
                            choiceNames = listVariables$definition,
                            selected = checkinChambre$checked)
@@ -793,16 +726,15 @@ checkinBM <- reactiveValues(checked = NULL)
   observe({ 
     listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & grepl("bm", caracData$code_site_station)==TRUE & grepl("SWC|TS|G", caracData$variable)==FALSE,list(variable,definition)])
     updateCheckboxGroupInput(session,
-                         "variableBM", i18n()$t("Météo"),
+                         "variableBM", translator$t("Météo"),
                          choiceValues = listVariables$variable,
                          choiceNames = listVariables$definition,
                          selected = checkinBM$checked)
  })
 
 #########################################################################################
-# Liste des variables WTD
+# List of WTD variables
 checkinWTD <- reactiveValues(checked = NULL)
-# Variables piezo
   observe({
     input$variableWTD
     isolate({
@@ -815,16 +747,15 @@ checkinWTD <- reactiveValues(checked = NULL)
   observe({ 
     listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & caracData$variable %in% c("WTD","TW"),list(variable,definition)])
       updateCheckboxGroupInput(session,
-                           "variableWTD", i18n()$t("Hydrologie"),
+                           "variableWTD", translator$t("Hydrologie"),
                            choiceValues = listVariables$variable,
                            choiceNames = listVariables$definition,
                            selected = checkinWTD$checked)
  })
 
 #########################################################################################
-# Liste des variables Biogeo
+# List of Biogeo variables
 checkinBiogeo <- reactiveValues(checked = NULL)
-# Variables Biogeo
   observe({
     input$variableBiogeo 
     isolate({
@@ -837,37 +768,16 @@ checkinBiogeo <- reactiveValues(checked = NULL)
   observe({ 
     listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & caracData$variable %in% c("FDOC","FPOC"),list(variable,definition)])
       updateCheckboxGroupInput(session,
-                           "variableBiogeo", i18n()$t("Biogéochimie"),
+                           "variableBiogeo", translator$t("Biogéochimie"),
                            choiceValues = listVariables$variable,
                            choiceNames = listVariables$definition,
                            selected = checkinBiogeo$checked)
  })
 
 #########################################################################################
- #WindRose <- eventReactive(go(),{
-  #  input$variableWindRose
-  #})
+checkinSWC <- reactiveValues(checked = NULL)
 
-  # reactiveValues
-  #bm1Checked<- reactiveValues(checked=NULL)
-
-  # observe event for updating the reactiveValues
-  #observe({
-   # siteBM <- match(siteSelectedVariable()[grepl("bm1",siteSelectedVariable())],siteSelectedVariable())
-   # isolate({
-#    if(length(siteBM)>0){
-      #bm1Checked$checked <- siteBM
-    #}else{bm1Checked$checked <- NULL}
-  #})
-  #})
-
-#observe({
-    #toggleState("variableWindRose", condition = !is.null(bm1Checked$checked))
-  #})
-#########################################################################################
-checkinSWC <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NULL)
-
-# List des variables SWC
+# List of SWC variables
   observe({
     input$variableSWC
     isolate({
@@ -880,13 +790,13 @@ checkinSWC <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NUL
   observe({ 
     listVariables <- checkboxVariablePedo(dbCarac=caracData,codeVariable="SWC",siteBM=siteSelectedVariable())
     updateCheckboxGroupInput(session,
-                         "variableSWC", i18n()$t("Teneur en eau du sol"),
+                         "variableSWC", translator$t("Teneur en eau du sol"),
                          choiceValues = listVariables$variable,
                          choiceNames = listVariables$definitionsimple,
                          selected = checkinSWC$checked)
  })
 #########################################################################################
-# Liste des variables TS
+# List of TS variables
 checkinTS <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NULL)
 
     observe({
@@ -901,13 +811,13 @@ checkinTS <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NULL
   observe({ 
     listVariables <- checkboxVariablePedo(dbCarac=caracData,codeVariable="TS",siteBM=siteSelectedVariable())
     updateCheckboxGroupInput(session,
-                         "variableTS", i18n()$t("Température du sol"),
+                         "variableTS", translator$t("Température du sol"),
                          choiceValues = listVariables$variable,
                          choiceNames = listVariables$definitionsimple,
                          selected = checkinTS$checked)
  })
 #########################################################################################
-# Liste des variables G
+# List of G variables
 checkinG <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NULL)
 
 observe({
@@ -922,39 +832,36 @@ observe({
 observe({ 
     listVariables <- checkboxVariablePedo(dbCarac=caracData,codeVariable="G_",siteBM=siteSelectedVariable())
     updateCheckboxGroupInput(session,
-                         "variableG", i18n()$t("Flux de chaleur dans le sol"),
+                         "variableG", translator$t("Flux de chaleur dans le sol"),
                          choiceValues = listVariables$variable,
                          choiceNames = listVariables$definitionsimple,
                          selected = checkinG$checked)
  })
 
-######################################Fin de la construction des checkin variables####################################
+######################################End of checkin variables construction####################################
 
-##########################################Bouton téléchargement des données###########################################
+##########################################Download button data###########################################
 
-# Téléchargement des données
+# Download button data
   output$downloadData <- downloadHandler(
     filename = function() {
       paste("Data_SNOT_",format(Sys.time(), '%d_%m_%Y_%X'),".zip",sep="")
     },
     content = function(fname){
 
-      withProgress(message = i18n()$t("Début de l'extraction ..."),{
-      incProgress(0.1,i18n()$t("Requête de la base de données ..."))
+      withProgress(message = translator$t("Début de l'extraction ..."),{
+      incProgress(0.1,translator$t("Requête de la base de données ..."))
 
       setwd(tempdir())
       csvDataFile <- paste0("Data_SNOTourbieres_",format(Sys.time(), '%d_%m_%Y_%X'),".csv")
       csvRecapFile <- paste0("Metadata_SNOTourbieres_",format(Sys.time(), '%d_%m_%Y_%X'),".csv")
       csvDOIFile <- paste0("DOIDataSet_SNOTourbieres_",format(Sys.time(), '%d_%m_%Y_%X'),".csv")
 
-      # Génération des métadonnées
-      #CodeJeu <- unique(caracData[code_site_station %in% siteSelected() & variable %in% variableSelected(),code_jeu])
-
       extractionDataCpt <- sqlOutputAndAggregateMean()
 
-      # Extraction des données
+      # Data extraction
       # Controler ici
-      if(input$tableType==i18n()$t("Verticale")){
+      if(input$tableType==translator$t("Verticale")){
        # print("if#916")
         extractionDataCpt <- extractionDataCpt[,list(code_site_station,Date=as.character(Date),value,variable)]
         }else{
@@ -962,21 +869,21 @@ observe({
           extractionDataCpt <- extracData(extractionDataCpt,frequenceSelected())
       }
 
-      incProgress(0.6,i18n()$t("Création de la métadonnée ..."))     
-      # Recap du téléchargement
+      incProgress(0.6,translator$t("Création de la métadonnée ..."))     
+      # Recap table when download
       recapTableDownload <- recapTable()[,list(code_site_station,site_nom,station_nom,variable,definition,unite,fabricant,instrument,description_capteur,zet_coordonnees_bbox,description_methode)]
             
-      # Recap des DOI
+      # Recap DOI
       CodeJeu <- unique(recapTable()[,code_jeu])
       recapDOIJeu <- tableJeu(pool)[code_jeu %in% CodeJeu,list(code_jeu,doi,citation)] 
-      names(recapDOIJeu) <- c(i18n()$t("Jeu de données"),i18n()$t("DOI de toutes les versions"),"Citation")
+      names(recapDOIJeu) <- c(translator$t("Jeu de données"),translator$t("DOI de toutes les versions"),"Citation")
 
-      incProgress(0.2,i18n()$t("Création du fichier ..."))
+      incProgress(0.2,translator$t("Création du fichier ..."))
       write.csv(extractionDataCpt,csvDataFile,quote=FALSE,row.names=FALSE)
       write.table(recapDOIJeu,csvDOIFile,quote=FALSE,row.names=FALSE,sep=";")
       write.table(recapTableDownload,csvRecapFile,quote=FALSE,row.names=FALSE,sep=";")
-      incProgress(0.1,i18n()$t("Finalisation ..."))
-      })#Fin de la progression
+      incProgress(0.1,translator$t("Finalisation ..."))
+      })#end of progress
 
       if (file.exists(paste0(fname, ".zip")))
         file.rename(paste0(fname, ".zip"), fname)  
@@ -989,7 +896,7 @@ observe({
 )
 
 
-}#Fin du module
+}#End module
 
 
   

@@ -7,16 +7,14 @@
 sensorSelectedMap(mapSensorSelected, allSite = FALSE, translator)
 }
 \arguments{
+\item{mapSensorSelected}{data.table from mod_welcome}
+
 \item{allSite}{Logical operator to select allSite or not (TRUE, FALSE)}
 
 \item{translator}{translator object for translation}
-
-\item{tableCarac}{data.table from mod_welcome}
-
-\item{facetWrapOption}{Logical operator to use facetWrap on site or site/station (TRUE, FALSE)}
 }
 \value{
-dygraph of timetrend
+leaflet
 }
 \description{
 Chart of disponibility data (welcome module)

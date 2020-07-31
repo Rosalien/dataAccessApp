@@ -5,7 +5,7 @@
 #' @importFrom yaml yaml.load_file
 #' @importFrom pool dbPool
 #' @importFrom DBI dbDriver
-#' @import RPostgreSQL
+#' @importFrom RPostgreSQL PostgreSQL
 #' @examples
 #' \dontrun{
 #' pool <- confConnexion("~/SI_SNOT/dbconfProd.yaml")
@@ -118,8 +118,7 @@ return(data)
 #' @param periodeSelected Vector string of period selected with "yyyy-mm-dd" format (ex. c("2008-01-15","2014-05-25"))
 #' @param pool data base configuration (from confConnexion function)
 #' @return data.table of values
-#' @importFrom data.table setDT
-#' @importFrom data.table setkey
+#' @importFrom data.table setDT setkey
 #' @importFrom DBI dbGetQuery
 #' @importFrom reshape melt
 #' @export
@@ -137,7 +136,7 @@ queryDataSNOT <- function(pool,variableSelected,siteSelected,periodeSelected){
   data <- setDT(dbGetQuery(pool, queryValueSNOT))
 
   # Partie à optimiser
-  meltvalue <- reshape::melt(data,id=1:4,na.rm=TRUE)
+  meltvalue <- setDT(reshape::melt(data,id=1:4,na.rm=TRUE))
   is.na(meltvalue$value) <- meltvalue$value==-9999  
   meltvalue$variable <- as.character(meltvalue$variable)
   setkey(meltvalue, variable, code_site_station, datatype)

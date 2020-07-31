@@ -16,6 +16,12 @@ grid_arrange_shared_legend(
 }
 \arguments{
 \item{...}{ggplot objects can be passed in ...}
+
+\item{nrow}{ggplot parameter}
+
+\item{ncol}{ggplot parameter}
+
+\item{position}{legend position ("bottom", "right","top","left")}
 }
 \value{
 ggplots
