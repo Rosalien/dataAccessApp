@@ -1,5 +1,3 @@
-
-
 #' welcome UI Function
 #'
 #' @description A shiny Module.
@@ -79,30 +77,11 @@ mod_welcome <- function(input, output, session,translationVariable){
   translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
 
-  # Internationalization des variables métadonnées
-  metadataVariable <- c("type")
-
-  # On assigne aux variables metadataVariable le nom de colonne internationalisé (utile??)
-  for(i in metadataVariable){
-    assign(i,paste0(i,"_",language))
-  }
-
-  # Caractéristique de l'ensemble des données
-  # Mettre dans une fonction
-  caracDataSensor <- caracdata(pool,language)[order(variable)]
-  
-  variableCaracData <- c("code_jeu","code_site","code_station","code_site_station","site_nom","theme","datatype","variable","unite","mindate","maxdate","zet_coordonnees_bbox")
-  metadataVariable <- c("definition","station_description","site_description","station_nom")
-  metadataSensor <- c("fabricant","instrument","description_capteur","station_description")
-
-  caracData <- unique(caracDataSensor[,c(variableCaracData,metadataVariable),with=FALSE])
-  caracCarto <- unique(caracDataSensor[,c(variableCaracData,metadataSensor),with=FALSE])
-
-  # lecture du fichier pour gérer les couleurs
-  col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
-  # Sélection de la colonne en fonction de la langue
-  col_station <- col_station[,c("datatype","couleur",type)]
-  names(col_station) <- c(names(col_station[1:2]),"type")
+  # Caractéristique de l'ensemble des données 
+  loadData <- loadCaracDataAndCarto(pool,language)
+  caracData <- loadData[[1]]
+  caracCarto <- loadData[[2]]
+  col_station <- loadData[[4]]
 
   # Jointure
   outdbcarto <- merge(caracCarto,col_station, by.x = "datatype", by.y = "datatype", all.x = TRUE,all.y=FALSE)

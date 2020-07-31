@@ -1,7 +1,3 @@
-#translator <- shiny.i18n::Translator$new(translation_csvs_path = "translation")
-#translator$set_translation_language("en")
-#language <- "en"
-
 #' mod_accessdataUI
 #'
 #' @description A shiny Module.
@@ -250,27 +246,20 @@ tabPanel(translator$t("Accès aux données"),
 mod_accessdata <- function(input, output, session,translationVariable){
   my_wd <- getwd()
   ns <- session$ns
+
+##################################Paramètres de connexion et langue####################################
+
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
   translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
   
 ##################################Chargement des données####################################
-# Mettre une fonction
-  col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
-  caracDataSensor <- caracdata(pool,language)[order(variable)]
-  
-  variableCaracData <- c("code_jeu","code_site","code_station","code_site_station","site_nom","theme","datatype","variable","unite","mindate","maxdate","zet_coordonnees_bbox")
-  metadataVariable <- c("definition","station_description","site_description","station_nom")
-  metadataSensor <- c("fabricant","instrument","description_capteur","station_description")
-  metadataMethod <- c("description_methode")
 
-  caracData <- unique(caracDataSensor[,c(variableCaracData,metadataVariable),with=FALSE])
-  caracCarto <- unique(caracDataSensor[,c(variableCaracData,metadataSensor,metadataMethod),with=FALSE])
-
-  ## Sélection de la colonne en fonction de la langue
-  col_station <- col_station[,c("datatype","couleur",paste0("type_",language))]
-  names(col_station) <- c(names(col_station[1:2]),"type")
+  loadData <- loadCaracDataAndCarto(pool,language)
+  caracData <- loadData[[1]]
+  caracCarto <- loadData[[3]]
+  col_station <- loadData[[4]]
 
 ############################################################################################
 
@@ -287,6 +276,7 @@ observeEvent(input$starthelp,
                                                "skipLabel"=i18n()$t("Annuler")))
                                 #events = list("oncomplete"=I('alert("Glad that is over")')))
   )
+############################################################################################
 
 observeEvent(input$videoChart, {
     show_alert(

@@ -49,6 +49,35 @@ variableToVariableSimple <- function(x){
 #' @export
 '%!in%' <- function(x,y)!('%in%'(x,y))
 
+
+#' @title loadCaracDataAndCarto
+#' @description Load data caracdata() and create 3 data.table used in application
+#' @param pool data base configuration (from confConnexion function)
+#' @param language String of language ("fr" or "en")
+#' @return 3 data.table 
+#' @importFrom data.table setDT
+#' @export
+#' 
+loadCaracDataAndCarto <- function(pool,language){
+  col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
+  caracDataSensor <- caracdata(pool,language)[order(variable)]
+  
+  variableCaracData <- c("code_jeu","code_site","code_station","code_site_station","site_nom","theme","datatype","variable","unite","mindate","maxdate","zet_coordonnees_bbox")
+  metadataVariable <- c("definition","station_description","site_description","station_nom")
+  metadataSensor <- c("fabricant","instrument","description_capteur","station_description")
+  metadataMethod <- c("description_methode")
+
+  caracData <- unique(caracDataSensor[,c(variableCaracData,metadataVariable),with=FALSE])
+  caracCartoMethod <- unique(caracDataSensor[,c(variableCaracData,metadataSensor,metadataMethod),with=FALSE])
+  caracCarto <- unique(caracDataSensor[,c(variableCaracData,metadataSensor),with=FALSE])
+  
+  ## Sélection de la colonne en fonction de la langue
+  col_station <- col_station[,c("datatype","couleur",paste0("type_",language))]
+  names(col_station) <- c(names(col_station[1:2]),"type")
+
+  return(list(caracData=caracData,caracCarto=caracCarto,caracCartoMethod=caracCartoMethod,col_station=col_station))
+}
+
 #' @title dbDayNight
 #' @description Create day and night parameter into 'dataSelected' data.table
 #' @param dataSelected data.table from mod_accessdata
