@@ -65,7 +65,6 @@ tabPanel(translator$t("Accès aux données"),
     introjsUI(),
     fluidRow(
       column(2,
-        #,style="position:relative;top:-90px;left:1500px"),
         introBox(
         dropdownButton(
           icon = icon("cloudversify"),width = "150%",circle = FALSE,status = "warning",label = translator$t("Stations"),
@@ -119,8 +118,8 @@ tabPanel(translator$t("Accès aux données"),
             column(3,
               checkboxGroupInput(ns("variableEC"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL),
               checkboxGroupInput(ns("variableChambres"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)),
-            column(3,checkboxGroupInput(ns("variableBM"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL),
-              checkboxInput(ns("variableWindRose"),label=translator$t("Rose des vents"),value=NULL)),
+            column(3,checkboxGroupInput(ns("variableBM"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)),
+              #checkboxInput(ns("variableWindRose"),label=translator$t("Rose des vents"),value=NULL)),
             column(4,
               fluidPage(tweaks,fluidRow(column(width = 8, list(NULL,tags$div(align = 'left',class = 'multicol',
                 checkboxGroupInput(ns("variableTS"),label="NULL",selected = NULL,choiceNames=NULL,choiceValues=NULL)))))),
@@ -138,7 +137,6 @@ tabPanel(translator$t("Accès aux données"),
       column(10,
       fluidRow(
          column(3,
-          #actionButton(ns("refresh"), "Refresh"),
           introBox(
             actionBttn(ns("go0"),icon = icon("sync"),style = "fill", color = "danger",label = translator$t("Mise à jour de la sélection"),size="sm"),
             data.step = 6,
@@ -163,10 +161,6 @@ tabPanel(translator$t("Accès aux données"),
                             width = "70%",icon=icon("question-circle"),circle=FALSE,label=translator$t("Aide"),status = "danger"
                 )
         )
-         #column(4,style='top: -15px;',
-          #radioGroupButtons(ns('selected_language'),label = "",choices = c(`<i class='fa fa-bar-chart'></i>` = translator$languages[1],`<i class='fa fa-pie-chart'></i>` = translator$languages[2]),justified = TRUE,selected = translator$languages[1])
-          # radioButtons(ns('selected_language'),label="",inline=TRUE,choices = translator$languages,selected = translator$languages[1])
-          #)
         ),
         uiOutput(ns('captionRecap')),
       (
@@ -185,23 +179,15 @@ tabPanel(translator$t("Accès aux données"),
               ,dataTableOutput(ns("tableSensor")))
               )
               ),
-            #dataTableOutput(ns("tableData"))),# end of "Dataset" tab panel
           tabPanel(p(icon("table"),translator$t("Données")),
             withSpinner(dataTableOutput(ns("Data")),type=5)),                       
-          #tabPanel(p(icon("map"),"Map"),
-           # leafletOutput(ns("sensorMap"),width="100%",height = 700)),
           tabPanel(p(icon("line-chart"),translator$t("Série temporelle")),
-            withSpinner(uiOutput(ns("timetrendSNOT")),type=5),
-            withSpinner(plotOutput(ns("windRoseggplotSite")),type=5)),
+            withSpinner(uiOutput(ns("timetrendSNOT")),type=5)),
+            #withSpinner(plotOutput(ns("windRoseggplotSite")),type=5)),
           tabPanel(p(icon("calculator"),translator$t("Statistiques")),
             checkboxGroupInput(ns('facetWrapOption1'),label=translator$t("Détail par"),inline=TRUE,choices = c("month","season","year","dayNight"),selected=NULL),
             withSpinner(dataTableOutput(ns("SummaryData")),type=5)# end of "chart" tab panel
             ),
-          # Suppression de la partie boxplot dans l'appli, très peu utilisé
-          #tabPanel(p(icon("chart-bar"),translator$t("Boxplot")),
-            #radioButtons(ns('facetWrapOption2'),label=translator$t("Détail par"),inline=TRUE,choices = c(translator$t("Sans"),"month","season","year","dayNight"),selected=translator$t("Sans")),
-            #withSpinner(plotOutput(ns("boxPlotggplotSite")),type=5),
-            #withSpinner(uiOutput(ns("boxPlotggplotTypeVariable")),type=5)),
           tabPanel(p(icon("chart-bar"),translator$t("Construire un graphique")),
                     esquisserUI(id = ns("esquisse"),header = FALSE,choose_data = FALSE)
               ),
@@ -270,7 +256,7 @@ mod_accessdata <- function(input, output, session,translationVariable){
   translator$set_translation_language(language)
   
 ##################################Chargement des données####################################
-
+# Mettre une fonction
   col_station <- read.csv("inst/app/www/csv/datatype_couleur.csv",sep=";",header=TRUE,stringsAsFactors=FALSE)
   caracDataSensor <- caracdata(pool,language)[order(variable)]
   
@@ -477,13 +463,13 @@ output$underCitation <- DT::renderDataTable({
 })#
 
 # Rose des vents
-    output$windRoseggplotSite <- renderPlot({
-      if(WindRose()==TRUE){
-        subsetoutbdSNOT <- sqlOutputSiteStationWind
-        windRose <- graphWindRose(sqlOutputSiteStationWind())
-        do.call(grid_arrange_shared_legend,c(windRose,list(position="right")))
-      }else{}
-})
+    #output$windRoseggplotSite <- renderPlot({
+      #if(WindRose()==TRUE){
+        #subsetoutbdSNOT <- sqlOutputSiteStationWind
+        #windRose <- graphWindRose(sqlOutputSiteStationWind())
+        #do.call(grid_arrange_shared_legend,c(windRose,list(position="right")))
+      #}else{}
+#})
 
 # renderUI pour la construction des graphiques à façon
  data_r <- reactiveValues(data=iris,name="dataSNOT")
@@ -707,19 +693,19 @@ facetWrapSelectedTable <- reactive({
   })
 
 # Reactive pour sélectionner les variable de construction de la rose des vents
-  sqlOutputSiteStationWind <- reactive({
-    variableSelected <- c("WD_1_1_1","WS_1_1_1")
+#  sqlOutputSiteStationWind <- reactive({
+    #variableSelected <- c("WD_1_1_1","WS_1_1_1")
 
     # Lancement de la requête
-    meltvalue <- queryDataSNOT(pool,variableSelected,siteSelected(),periodeSelected())
-    validate(need(nrow(meltvalue)>0,"Période d'analyse sans données"))
+    #meltvalue <- queryDataSNOT(pool,variableSelected,siteSelected(),periodeSelected())
+    #validate(need(nrow(meltvalue)>0,"Période d'analyse sans données"))
 
     # Jointure avec data.table (caracData[meltvalue])
-    dataSelected <- caracData[meltvalue]
+#    dataSelected <- caracData[meltvalue]
 
-    valuecarac <- dbselect(dataSelected,dayNightSelected(),frequenceSelected(),siteSelected(),variableSelected)
-    return(valuecarac)
-})#
+ #   valuecarac <- dbselect(dataSelected,dayNightSelected(),frequenceSelected(),siteSelected(),variableSelected)
+  #  return(valuecarac)
+#})#
 
 dataModal <- function(failed = FALSE){
       modalDialog(
@@ -868,26 +854,26 @@ checkinBiogeo <- reactiveValues(checked = NULL)
  })
 
 #########################################################################################
- WindRose <- eventReactive(go(),{
-    input$variableWindRose
-  })
+ #WindRose <- eventReactive(go(),{
+  #  input$variableWindRose
+  #})
 
   # reactiveValues
-  bm1Checked<- reactiveValues(checked=NULL)
+  #bm1Checked<- reactiveValues(checked=NULL)
 
   # observe event for updating the reactiveValues
-  observe({
-    siteBM <- match(siteSelectedVariable()[grepl("bm1",siteSelectedVariable())],siteSelectedVariable())
-    isolate({
-    if(length(siteBM)>0){
-      bm1Checked$checked <- siteBM
-    }else{bm1Checked$checked <- NULL}
-  })
-  })
+  #observe({
+   # siteBM <- match(siteSelectedVariable()[grepl("bm1",siteSelectedVariable())],siteSelectedVariable())
+   # isolate({
+#    if(length(siteBM)>0){
+      #bm1Checked$checked <- siteBM
+    #}else{bm1Checked$checked <- NULL}
+  #})
+  #})
 
-observe({
-    toggleState("variableWindRose", condition = !is.null(bm1Checked$checked))
-  })
+#observe({
+    #toggleState("variableWindRose", condition = !is.null(bm1Checked$checked))
+  #})
 #########################################################################################
 checkinSWC <- reactiveValues(checked = NULL)#reactiveValues(EC = NULL,puts = NULL)
 
