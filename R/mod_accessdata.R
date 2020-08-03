@@ -13,7 +13,7 @@
 #' @importFrom plotly plotlyOutput
 #' @importFrom DT dataTableOutput datatable renderDataTable
 #' @importFrom leaflet leafletOutput renderLeaflet
-#' @importFrom shinyWidgets awesomeRadio dropdownButton pickerInput actionBttn radioGroupButtons
+#' @importFrom shinyWidgets awesomeRadio dropdownButton pickerInput actionBttn radioGroupButtons show_alert
 #' @importFrom shinyalert useShinyalert
 #' @importFrom rintrojs introjsUI introBox hintjs introjs
 #' @importFrom data.table setkeyv setDT

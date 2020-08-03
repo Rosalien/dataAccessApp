@@ -258,11 +258,10 @@ lapply(1:nrow(siteVariable),function(x){
 
 #' @title writeHeaderFile
 #' @description Create a file with header
-#' @param ... option for write.table
 #' @param x data.frame or data.table
 #' @param file String of file name
 #' @param header String of header
-#' @return Write a file
+#' @return Write a file with header
 #' @source https://stackoverflow.com/questions/12381117/add-header-to-file-created-by-write-csv
 #' @importFrom readr write_csv
 #' @export
@@ -280,15 +279,16 @@ if(!missing(header)) writeLines(header,con=datafile)
 
 #' @title sqlOutputDatasetArchive
 #' @description Extract dataset by code_jeu attribute from data baseeCreate a file with header
-#' @param language String of language ("en" or "fr")
+#' @param pool data base configuration (from confConnexion function)
+#' @param caracDataset data.table from caracdata(pool,language)
 #' @param checkinJeu String of code_jeu (ex. "lgt-ges-eddycovariance")
 #' @param archiveType String "OZCAR" to create archive type for SI Theia/OZCAR. If not, for ZENODO archive
 #' @return data.table of a dataset
 #' @export
 #'
-sqlOutputDatasetArchive <- function(language,checkinJeu,archiveType="ZENODO")({
+sqlOutputDatasetArchive <- function(pool,caracDataset,checkinJeu,archiveType="ZENODO")({
     # Load parameters for queryDataSNOT
-    caracDataset <- caracdata(language)[code_jeu %in% checkinJeu]
+    caracDataset <- caracDataset[code_jeu %in% checkinJeu,]
     variableJeu <- unique(caracDataset[,variable])
     siteJeu <- unique(caracDataset[,code_site_station])
     date_debut <- min(as.Date(unique(caracDataset[,mindate]),"%d-%m-%Y"))

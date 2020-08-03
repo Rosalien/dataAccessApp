@@ -4,10 +4,12 @@
 \alias{sqlOutputDatasetArchive}
 \title{sqlOutputDatasetArchive}
 \usage{
-sqlOutputDatasetArchive(language, checkinJeu, archiveType = "ZENODO")
+sqlOutputDatasetArchive(pool, caracDataset, checkinJeu, archiveType = "ZENODO")
 }
 \arguments{
-\item{language}{String of language ("en" or "fr")}
+\item{pool}{data base configuration (from confConnexion function)}
+
+\item{caracDataset}{data.table from caracdata(pool,language)}
 
 \item{checkinJeu}{String of code_jeu (ex. "lgt-ges-eddycovariance")}
 

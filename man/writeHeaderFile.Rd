@@ -15,11 +15,9 @@ writeHeaderFile(x, file, header)
 \item{file}{String of file name}
 
 \item{header}{String of header}
-
-\item{...}{option for write.table}
 }
 \value{
-Write a file
+Write a file with header
 }
 \description{
 Create a file with header

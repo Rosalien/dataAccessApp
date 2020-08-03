@@ -2,7 +2,7 @@
 #' 
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
-#' @import shiny
+#' @importFrom shiny titlePanel fluidPage navbarPage fluidRow div img
 #' @importFrom shinythemes shinytheme
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom shinyjs useShinyjs inlineCSS hidden
@@ -10,8 +10,11 @@
 #' @noRd
 #' 
 app_ui <- function(request) {
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation/",package = "dataAccessApp"))
-  translator$set_translation_language("en")
+  
+  language <- get_golem_options("language")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator$set_translation_language(language)
+
     # List the first level UI elements here 
     fluidPage(theme =shinytheme("flatly"),
       useShinyjs(),
@@ -31,7 +34,8 @@ app_ui <- function(request) {
               div(img(src="https://raw.githubusercontent.com/Rosalien/doc_snot/master/Figures/logo_Tourbieres.jpg",height = "60px",style = "position: relative; top: -20px;left:0px;"), "")
           ),
         mod_welcomeUI("mod_welcomeUI_1"),
-        mod_accessdataUI("mod_accessdataUI_1")
+        mod_accessdataUI("mod_accessdataUI_1"),
+        mod_extractiondatasetUI("mod_extractiondatasetUI_1")
         )
         )
       )
@@ -43,7 +47,6 @@ app_ui <- function(request) {
 #' This function is internally used to add external 
 #' resources inside the Shiny application. 
 #' 
-#' @import shiny
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
 golem_add_external_resources <- function(){
