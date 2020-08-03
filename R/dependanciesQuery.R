@@ -113,16 +113,17 @@ return(data)
 
 #' @title queryDataSNOT
 #' @description Sql query to extrat values of variable from site/station and period selected
+#' @param pool data base configuration (from confConnexion function)
 #' @param siteSelected String of site/station code selected in application (ex. "lgt/ec1" or c("lgt/ec1","lgt/bm1"))
 #' @param variableSelected String of variable code selected in application (ex. "FC" or c("FC","FCH4"))#'
 #' @param periodeSelected Vector string of period selected with "yyyy-mm-dd" format (ex. c("2008-01-15","2014-05-25"))
-#' @param pool data base configuration (from confConnexion function)
+#' @param melted Logical. If TRUE convert melt data.table. If FALSE, no melt (used for dataset-archive)
 #' @return data.table of values
 #' @importFrom data.table setDT setkey
 #' @importFrom DBI dbGetQuery
 #' @importFrom reshape melt
 #' @export
-queryDataSNOT <- function(pool,variableSelected,siteSelected,periodeSelected){
+queryDataSNOT <- function(pool,variableSelected,siteSelected,periodeSelected,melted=TRUE){
   variablequery <- as.matrix(paste("max(case when variable='",variableSelected,"' then value else null end) \"",variableSelected,"\"",sep=""))
   variablecharacter <- apply(variablequery,2,paste,collapse=",")
 
@@ -134,14 +135,15 @@ queryDataSNOT <- function(pool,variableSelected,siteSelected,periodeSelected){
       group by code_site_station, date, time,datatype",sep="")
 
   data <- setDT(dbGetQuery(pool, queryValueSNOT))
-
-  # Partie à optimiser
-  meltvalue <- setDT(reshape::melt(data,id=1:4,na.rm=TRUE))
-  is.na(meltvalue$value) <- meltvalue$value==-9999  
-  meltvalue$variable <- as.character(meltvalue$variable)
-  setkey(meltvalue, variable, code_site_station, datatype)
-
-  return(meltvalue)
+  if(melted==TRUE){
+    meltvalue <- setDT(reshape::melt(data,id=1:4,na.rm=TRUE))
+    is.na(meltvalue$value) <- meltvalue$value==-9999  
+    meltvalue$variable <- as.character(meltvalue$variable)
+    setkey(meltvalue, variable, code_site_station, datatype)  
+    return(meltvalue)
+  }else{
+      return(data)
+  }
 }
 
 #' @title caracCarto

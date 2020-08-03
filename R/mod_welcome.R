@@ -13,7 +13,7 @@
 #' @importFrom plotly plotlyOutput renderPlotly
 #' @importFrom DT dataTableOutput datatable renderDataTable
 #' @importFrom leaflet leafletOutput renderLeaflet
-#' @importFrom shinyWidgets awesomeRadio materialSwitch
+#' @importFrom shinyWidgets awesomeRadio materialSwitch 
 #' @import shinydashboard
 #' 
 mod_welcomeUI <- function(id,translationVariable){

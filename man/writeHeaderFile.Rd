@@ -3,8 +3,11 @@
 \name{writeHeaderFile}
 \alias{writeHeaderFile}
 \title{writeHeaderFile}
+\source{
+https://stackoverflow.com/questions/12381117/add-header-to-file-created-by-write-csv
+}
 \usage{
-writeHeaderFile(x, file, header, f = write.csv, ...)
+writeHeaderFile(x, file, header)
 }
 \arguments{
 \item{x}{data.frame or data.table}
@@ -12,8 +15,6 @@ writeHeaderFile(x, file, header, f = write.csv, ...)
 \item{file}{String of file name}
 
 \item{header}{String of header}
-
-\item{f}{to write the file}
 
 \item{...}{option for write.table}
 }

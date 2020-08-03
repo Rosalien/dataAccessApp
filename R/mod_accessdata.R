@@ -19,6 +19,7 @@
 #' @importFrom data.table setkeyv setDT
 #' @import esquisse
 #' @importFrom shinyjs alert toggleState show
+#' @importFrom readr write_csv
 #' @import shinydashboard
 #' 
 mod_accessdataUI <- function(id,translationVariable){
@@ -879,9 +880,9 @@ observe({
       names(recapDOIJeu) <- c(translator$t("Jeu de données"),translator$t("DOI de toutes les versions"),"Citation")
 
       incProgress(0.2,translator$t("Création du fichier ..."))
-      write.csv(extractionDataCpt,csvDataFile,quote=FALSE,row.names=FALSE)
-      write.table(recapDOIJeu,csvDOIFile,quote=FALSE,row.names=FALSE,sep=";")
-      write.table(recapTableDownload,csvRecapFile,quote=FALSE,row.names=FALSE,sep=";")
+      write_csv(extractionDataCpt,csvDataFile)
+      write_csv(recapDOIJeu,csvDOIFile)
+      write_csv(recapTableDownload,csvRecapFile)
       incProgress(0.1,translator$t("Finalisation ..."))
       })#end of progress
 

@@ -4,7 +4,13 @@
 \alias{queryDataSNOT}
 \title{queryDataSNOT}
 \usage{
-queryDataSNOT(pool, variableSelected, siteSelected, periodeSelected)
+queryDataSNOT(
+  pool,
+  variableSelected,
+  siteSelected,
+  periodeSelected,
+  melted = TRUE
+)
 }
 \arguments{
 \item{pool}{data base configuration (from confConnexion function)}
@@ -14,6 +20,8 @@ queryDataSNOT(pool, variableSelected, siteSelected, periodeSelected)
 \item{siteSelected}{String of site/station code selected in application (ex. "lgt/ec1" or c("lgt/ec1","lgt/bm1"))}
 
 \item{periodeSelected}{Vector string of period selected with "yyyy-mm-dd" format (ex. c("2008-01-15","2014-05-25"))}
+
+\item{melted}{Logical. If TRUE convert melt data.table. If FALSE, no melt (used for dataset-archive)}
 }
 \value{
 data.table of values

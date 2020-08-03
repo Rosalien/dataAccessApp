@@ -262,11 +262,12 @@ lapply(1:nrow(siteVariable),function(x){
 #' @param x data.frame or data.table
 #' @param file String of file name
 #' @param header String of header
-#' @param f to write the file
 #' @return Write a file
+#' @source https://stackoverflow.com/questions/12381117/add-header-to-file-created-by-write-csv
+#' @importFrom readr write_csv
 #' @export
 #'
-writeHeaderFile<- function(x, file, header, f = write.csv, ...){
+writeHeaderFile<- function(x, file, header){
 # create and open the file connection
   datafile <- file(file, open = 'wt')
 # close on exit
@@ -274,5 +275,33 @@ writeHeaderFile<- function(x, file, header, f = write.csv, ...){
 # if a header is defined, write it to the file (@CarlWitthoft's suggestion)
 if(!missing(header)) writeLines(header,con=datafile)
 # write the file using the defined function and required addition arguments  
-  write.table(x, datafile,row.names=FALSE,col.names=TRUE,qmethod="escape",sep=";",fileEncoding = "UTF8")
+  write_csv(x, datafile)
 }
+
+#' @title sqlOutputDatasetArchive
+#' @description Extract dataset by code_jeu attribute from data baseeCreate a file with header
+#' @param language String of language ("en" or "fr")
+#' @param checkinJeu String of code_jeu (ex. "lgt-ges-eddycovariance")
+#' @param archiveType String "OZCAR" to create archive type for SI Theia/OZCAR. If not, for ZENODO archive
+#' @return data.table of a dataset
+#' @export
+#'
+sqlOutputDatasetArchive <- function(language,checkinJeu,archiveType="ZENODO")({
+    # Load parameters for queryDataSNOT
+    caracDataset <- caracdata(language)[code_jeu %in% checkinJeu]
+    variableJeu <- unique(caracDataset[,variable])
+    siteJeu <- unique(caracDataset[,code_site_station])
+    date_debut <- min(as.Date(unique(caracDataset[,mindate]),"%d-%m-%Y"))
+    date_fin <- max(as.Date(unique(caracDataset[,maxdate]),"%d-%m-%Y"))
+    periodeJeu <- c(date_debut,date_fin)
+
+    # Launch query
+    data <- queryDataSNOT(pool,variableJeu,siteJeu,periodeJeu,melted=FALSE)
+    
+    if(archiveType=="OZCAR")
+      {
+        data[,dateEnd:=paste0(date,'T',time,'Z')]
+      }else{
+        data[,c("datatype"):=NULL]
+      }
+  })
