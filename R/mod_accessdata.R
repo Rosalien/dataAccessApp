@@ -27,7 +27,7 @@ mod_accessdataUI <- function(id,translationVariable){
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
 
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
   translator$set_translation_language(language)
 
   # Checkbocks on multi-column
@@ -250,7 +250,7 @@ mod_accessdata <- function(input, output, session,translationVariable){
 #Database connexion and language selection
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
   translator$set_translation_language(language)
   
 # Load data
