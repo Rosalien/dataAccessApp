@@ -1,6 +1,6 @@
-> Figure, markdown et css
+> www folder
 
-- css : brouillon à supprimer
-- md : tous les fichiers markdown
-- png : toutes les figures
-- csv : fichiers csv 
+- md : all markdown files
+- translation :  Internationalization apps with shiny.i18n
+- csv : csv files for application
+- png : png files

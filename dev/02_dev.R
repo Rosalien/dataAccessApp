@@ -23,6 +23,10 @@ listpaquets <- c("zip","readr","shiny","shinythemes","RPostgreSQL","DT","pool","
 "RColorBrewer","shinyalert","gsubfn","suncalc","rintrojs","esquisse","shinydashboard","ggtern","DBI","ggplot2","yaml","httr",'jsonlite')
 sapply(listpaquets,usethis::use_package)
 
+## Files don't used ----
+usethis::use_build_ignore(c("dbconfLocal.yaml","dbconfProd.yaml"))
+usethis::use_build_ignore("Readme.R")
+
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "accessdata" ) # Name of the module

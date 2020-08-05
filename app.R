@@ -4,4 +4,4 @@
 
 pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
 options( "golem.app.prod" = TRUE)
-dataAccessApp::run_app(language="en",pool="~/SI_SNOT/dbconfProd.yaml") # add parameters here (if any)
+dataAccessApp::run_app(language="en",pool="dbconfProd.yaml")
