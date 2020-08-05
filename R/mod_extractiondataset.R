@@ -16,7 +16,7 @@
 mod_extractiondatasetUI <- function(id){
   ns <- NS(id)
   language <- get_golem_options("language")
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
   
   tabPanel(translator$t("Extraction des jeux de données"),
@@ -50,7 +50,7 @@ mod_extractiondataset <- function(input, output, session){
   
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
 
   caracJeu <- caracdata(pool,language)

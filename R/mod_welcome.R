@@ -20,7 +20,7 @@ mod_welcomeUI <- function(id,translationVariable){
   ns <- NS(id)
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
 
   tabPanel(translator$t("Bienvenue"),
@@ -74,7 +74,7 @@ mod_welcome <- function(input, output, session,translationVariable){
   ns <- session$ns
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
-  translator <- shiny.i18n::Translator$new(translation_csvs_path = system.file("inst/app/www/translation",package = "dataAccessApp"))
+  translator <- shiny.i18n::Translator$new(translation_csvs_path = "inst/app/www/translation")
   translator$set_translation_language(language)
 
   # Caractéristique de l'ensemble des données 
