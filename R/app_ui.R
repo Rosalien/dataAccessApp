@@ -34,7 +34,8 @@ app_ui <- function(request) {
               div(img(src="https://raw.githubusercontent.com/Rosalien/doc_snot/master/Figures/logo_Tourbieres.jpg",height = "60px",style = "position: relative; top: -20px;left:0px;"), "")
           ),
         mod_welcomeUI("mod_welcomeUI_1"),
-        mod_accessdataUI("mod_accessdataUI_1")
+        mod_accessdataUI("mod_accessdataUI_1"),
+        mod_aboutUI("mod_aboutUI_1")
         )
         )
       )
