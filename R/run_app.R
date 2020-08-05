@@ -6,7 +6,6 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
-#' @importFrom toolboxApps confConnexion
 
 run_app <- function(language,pool
 ) {
