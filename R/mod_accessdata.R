@@ -59,7 +59,7 @@ tabPanel(translator$t("Accès aux données"),
          tags$head(tags$style(HTML("hr {border-top: 1px solid #ecf0f1;}"))),
          tags$head(tags$style(HTML('#run{background-color:orange}'))),
 #         tags$head(HTML(googleAnalyticsParameter())),
-         tags$script(HTML("$(document).one('shiny:idle',function() {ga('set','userId', Shiny.user);});")),
+         #tags$script(HTML("$(document).one('shiny:idle',function() {ga('set','userId', Shiny.user);});")),
   fluidPage(
     introjsUI(),
     fluidRow(
