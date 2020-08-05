@@ -12,6 +12,5 @@ app_server <- function( input, output, session ) {
   	 shinyjs::show("app-content")
   	 callModule(mod_welcome,"mod_welcomeUI_1")
 	 callModule(mod_accessdata,"mod_accessdataUI_1")
-	 callModule(mod_extractiondataset,"mod_extractiondatasetUI_1")
 }
 

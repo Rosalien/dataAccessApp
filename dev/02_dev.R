@@ -16,10 +16,10 @@
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
 usethis::use_package( "thinkr" )
-usethis::use_package( "zip" )
+usethis::use_package( "toolboxApps" )
 listpaquets <- c("zip","readr","shiny","shinythemes","RPostgreSQL","DT","pool","leaflet","stringr","sp","dygraphs","xts","data.table","anytime",
 "curl","dplyr","wesanderson","shinyjs","shinycssloaders","shinyWidgets","plotly",
-"reshape","tableHTML","gridExtra","grid","shiny.i18n",
+"reshape","tableHTML","gridExtra","grid","shiny.i18n","toolboxApps",
 "RColorBrewer","shinyalert","gsubfn","suncalc","rintrojs","esquisse","shinydashboard","ggtern","DBI","ggplot2","yaml","httr",'jsonlite')
 sapply(listpaquets,usethis::use_package)
 

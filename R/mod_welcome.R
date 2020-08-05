@@ -15,6 +15,7 @@
 #' @importFrom leaflet leafletOutput renderLeaflet
 #' @importFrom shinyWidgets awesomeRadio materialSwitch 
 #' @import shinydashboard
+#' @import toolboxApps
 #' 
 mod_welcomeUI <- function(id,translationVariable){
   ns <- NS(id)
