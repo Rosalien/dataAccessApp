@@ -5,8 +5,9 @@
 #' @importFrom shiny titlePanel fluidPage navbarPage fluidRow div img
 #' @importFrom shinythemes shinytheme
 #' @importFrom shinycssloaders withSpinner
-#' @importFrom shinyjs useShinyjs inlineCSS hidden
 #' @importFrom shiny.i18n Translator
+#' @importFrom shinyjs useShinyjs inlineCSS hidden
+#' @importFrom waiter use_waitress use_waiter
 #' @noRd
 #' 
 app_ui <- function(request) {
@@ -18,9 +19,9 @@ app_ui <- function(request) {
     # List the first level UI elements here 
     fluidPage(theme =shinytheme("flatly"),
       useShinyjs(),
-      inlineCSS(appCSS()),
       # Loading message
-      div(id = "loading-content",withSpinner(h4(translator$t("Chargement ...")),type=4)),
+      use_waitress(color="#0e73b3"),
+      use_waiter(),
       hidden(
       div(
         id = "app-content",
