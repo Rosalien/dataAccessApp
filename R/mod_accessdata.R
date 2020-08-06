@@ -23,7 +23,7 @@
 #' @import shinydashboard
 #' @import toolboxApps
 #' 
-mod_accessdataUI <- function(id,translationVariable){
+mod_accessdataUI <- function(id){
   ns <- NS(id)
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
@@ -244,7 +244,10 @@ tabPanel(translator$t("Accès aux données"),
 #' mod_accessdata Server Function
 #'
 #' @noRd 
-mod_accessdata <- function(input, output, session,translationVariable){
+mod_accessdata <- function(id){
+moduleServer(
+  id,
+  function(input,output,session){
   my_wd <- getwd()
   ns <- session$ns
 
@@ -896,9 +899,8 @@ observe({
     },
   contentType = "application/zip"
 )
-
-
-}#End module
-
+}#End function
+)#End moduleServer
+}#End function module
 
   

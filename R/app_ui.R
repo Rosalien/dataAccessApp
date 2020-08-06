@@ -7,7 +7,7 @@
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom shiny.i18n Translator
 #' @importFrom shinyjs useShinyjs inlineCSS hidden
-#' @importFrom waiter use_waitress use_waiter
+#' @importFrom waiter use_waitress use_waiter 
 #' @noRd
 #' 
 app_ui <- function(request) {

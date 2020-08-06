@@ -17,7 +17,7 @@
 #' @import shinydashboard
 #' @import toolboxApps
 #' 
-mod_welcomeUI <- function(id,translationVariable){
+mod_welcomeUI <- function(id){
   ns <- NS(id)
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
@@ -71,7 +71,10 @@ mod_welcomeUI <- function(id,translationVariable){
 #' welcome Server Function
 #'
 #' @noRd 
-mod_welcome <- function(input, output, session,translationVariable){
+mod_welcome <- function(id){
+moduleServer(
+id,
+function(input, output, session) {
   ns <- session$ns
   language <- get_golem_options("language")
   pool <- get_golem_options("pool")
@@ -187,4 +190,6 @@ outdbcartoDataStation <- reactiveValues()
       timelineDataAvailable(figcarac,outdbcartoDataStation$optionMap,facetWrapSelected(),translator)
 
   })# Fin de figure
-}#Fin du module
+}#End function
+)#End module
+}#End function module

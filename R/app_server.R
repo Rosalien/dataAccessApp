@@ -2,7 +2,6 @@
 #' 
 #' @param input,output,session Internal parameters for {shiny}. 
 #'     DO NOT REMOVE.
-#' @importFrom shiny callModule
 #' @importFrom shinyjs hide show
 #' @importFrom waiter Waitress waiter_hide Waiter transparent
 #' @noRd
@@ -22,8 +21,8 @@ app_server <- function( input, output, session ) {
      # Hide the loading message when the rest of the server function has executed
      shinyjs::hide(id = "loading-content", anim = TRUE, animType = "fade")    
   	 shinyjs::show("app-content")
-  	 callModule(mod_welcome,"mod_welcomeUI_1")
-	 callModule(mod_accessdata,"mod_accessdataUI_1")
-	 callModule(mod_about,"mod_aboutUI_1")
+  	 mod_welcome("mod_welcomeUI_1")
+	 mod_accessdata("mod_accessdataUI_1")
+	 mod_about("mod_aboutUI_1")
 }
 

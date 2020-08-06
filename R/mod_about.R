@@ -6,7 +6,7 @@
 #'
 #' @noRd 
 #'
-#' @importFrom shiny NS tabPanel includeMarkdown
+#' @importFrom shiny NS tabPanel includeMarkdown moduleServer
 #' 
 mod_aboutUI <- function(id){
 	ns <- NS(id)
@@ -17,8 +17,12 @@ mod_aboutUI <- function(id){
 #' about Server Function
 #'
 #' @noRd 
-mod_about <- function(input, output, session){
-  ns <- session$ns
+mod_about <- function(id){
+	moduleServer(
+		id,
+		function(input, output, session){
+		}
+		)
 }#Fin du module
 
 
