@@ -23,5 +23,5 @@ Two wonderful's packages from [dreamr](https://www.dreamrs.fr/) :
 
 ## Contacts
 
-For any questions about data or web application functionnality, please contact : [contact.sno-tourbieres@cnrs-orleans.fr](https://github.com/ThinkR-open/golem
+For any questions about data or web application functionnality, please contact : [contact.sno-tourbieres@cnrs-orleans.fr](https://github.com/ThinkR-open/golem)
 
