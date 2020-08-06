@@ -1,18 +1,19 @@
 ## Thanks
 
-The web application is build with [R Shiny](https://shiny.rstudio.com/) and many packages from [RStudio team](https://rstudio.com/products/rpackages/). This application could not have been built without the help of R community present in stackoverflow, many thanks !
+The web application is built with [R Shiny](https://shiny.rstudio.com/) and many packages from [RStudio team](https://rstudio.com/products/rpackages/). This application could not have been built without help of R-community present in stackoverflow, many thanks !
 
-A special thank is give to people build these packages used in the application :
+A special thank is given to R-community who built these packages used in the application :
 
 - [rintrojs](https://carlganz.github.io/rintrojs/)
-- [Shinycssloaders](https://github.com/andrewsali/Shinycssloaders)
+- [waiter](https://github.com/JohnCoene/waiter)
 - [Shiny.i18n](https://github.com/Appsilon/Shiny.i18n)
+- [golem](https://github.com/ThinkR-open/golem)
 
-Two wonderful packages from [Dean Attali](https://deanattali.com/) :
+Two wonderful's packages from [Dean Attali](https://deanattali.com/) :
 - [Shinyalert](https://github.com/daattali/Shinyalert)
 - [Shinyjs](https://deanattali.com/Shinyjs/)
 
-Two wonderful packages from [dreamr](https://www.dreamrs.fr/) : 
+Two wonderful's packages from [dreamr](https://www.dreamrs.fr/) : 
 - [ShinyWidgets](http://shinyapps.dreamrs.fr/shinyWidgets/)
 - [esquisse](http://shinyapps.dreamrs.fr/esquisse/)
 
@@ -22,5 +23,5 @@ Two wonderful packages from [dreamr](https://www.dreamrs.fr/) :
 
 ## Contacts
 
-For any questions about data or web application functionnality, please contact us to this address : contact.sno-tourbieres@cnrs-orleans.fr
+For any questions about data or web application functionnality, please contact : [contact.sno-tourbieres@cnrs-orleans.fr](https://github.com/ThinkR-open/golem
 

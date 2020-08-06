@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom golem get_golem_options
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList moduleServer
 #' @importFrom shiny.i18n Translator
 #' @importFrom shinycssloaders withSpinner
 #' @importFrom plotly plotlyOutput
