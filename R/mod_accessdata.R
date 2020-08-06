@@ -729,7 +729,7 @@ checkinBM <- reactiveValues(checked = NULL)
   })
 
   observe({ 
-    listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & grepl("bm", caracData$code_site_station)==TRUE & grepl("SWC|TS|G", caracData$variable)==FALSE,list(variable,definition)])
+    listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & grepl("bm", caracData$code_site_station)==TRUE & grepl("SWC|TS|G|WTD", caracData$variable)==FALSE,list(variable,definition)])
     updateCheckboxGroupInput(session,
                          "variableBM", translator$t("Météo"),
                          choiceValues = listVariables$variable,
@@ -750,7 +750,7 @@ checkinWTD <- reactiveValues(checked = NULL)
   })
 
   observe({ 
-    listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & caracData$variable %in% c("WTD","TW"),list(variable,definition)])
+    listVariables <- unique(caracData[code_site_station %in% siteSelectedVariable() & caracData$variable %in% c("Q","WTD","TW"),list(variable,definition)])
       updateCheckboxGroupInput(session,
                            "variableWTD", translator$t("Hydrologie"),
                            choiceValues = listVariables$variable,
