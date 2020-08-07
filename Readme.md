@@ -1,7 +1,7 @@
 # dataAccessApp
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 Shiny app to visualize and extract data from SNO-Tourbières database
@@ -16,6 +16,39 @@ devtools::install_github("Rosalien/dataAccessApp")
 
 ## Deploy
 
+### Depencies
+
+### Deploy in local
+
 ``` r
-devtools::install_github("Rosalien/dataAccessApp")
+library(toolboxApp)
+dataAccessApp::run_app(language="en",pool="dbconfProd.yaml")
+```
+
+### Shiny-server
+
+Copy/paste package folder into shiny-server folder
+
+``` r
+git clone https://github.com/Rosalien/dataAccessApp.git
+cp -r dataAccessApp/* to/the/Shiny-server/folder/
+```
+
+Modify `app.R` for language and database configuration :
+
+- language : 'en' or 'fr'
+- pool : database configuration
+
+``` r
+dataAccessApp::run_app(language,pool)
+```
+
+### Docker
+
+```bash
+docker build -t dataaccessapp
+```
+
+```bash
+docker run --net=host dataaccessapp
 ```
