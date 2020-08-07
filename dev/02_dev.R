@@ -22,6 +22,8 @@ listpaquets <- c("zip","readr","shiny","shinythemes","RPostgreSQL","DT","pool","
 "reshape","tableHTML","gridExtra","grid","shiny.i18n","toolboxApps",
 "RColorBrewer","shinyalert","gsubfn","suncalc","rintrojs","esquisse","shinydashboard","ggtern","DBI","ggplot2","yaml","httr",'jsonlite')
 sapply(listpaquets,usethis::use_package)
+usethis::use_dev_package('toolboxApps')
+
 
 ## Files don't used ----
 usethis::use_build_ignore(c("dbconfLocal.yaml","dbconfProd.yaml"))
