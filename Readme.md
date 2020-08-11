@@ -37,7 +37,7 @@ cp -r dataAccessApp/* to/the/Shiny-server/folder/
 Modify `app.R` for language and database configuration :
 
 - language : 'en' or 'fr'
-- pool : path of yaml database configuration. [Example]()
+- pool : path of yaml database configuration. [Example of yaml file database configuration](https://raw.githubusercontent.com/Rosalien/dataAccessApp/master/inst/extdata/dbconfLocal.yaml)
 
 ``` r
 dataAccessApp::run_app(language,pool)
