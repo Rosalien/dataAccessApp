@@ -1,5 +1,5 @@
 FROM rocker/r-ver:3.6.3
-COPY dbconfProd.yaml dbconfProd.yaml
+COPY /inst/extdata/dbconfLocal.yaml dbconfProd.yaml
 RUN apt-get update && apt-get install -y  git-core imagemagick libjpeg-dev libcurl4-openssl-dev libgit2-dev libpng-dev libssh2-1-dev libssl-dev libxml2-dev libudunits2-dev libpq-dev make pandoc pandoc-citeproc zlib1g-dev && rm -rf /var/lib/apt/lists/*
 RUN echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl')" >> /usr/local/lib/R/etc/Rprofile.site
 RUN R -e 'install.packages("remotes")'
@@ -38,7 +38,6 @@ RUN Rscript -e 'remotes::install_version("shiny.i18n",upgrade="never", version =
 RUN Rscript -e 'remotes::install_version("tableHTML",upgrade="never", version = "2.0.0")'
 RUN Rscript -e 'remotes::install_version("shinythemes",upgrade="never", version = "1.1.2")'
 RUN Rscript -e 'remotes::install_version("reshape",upgrade="never", version = "0.8.8")'
-RUN Rscript -e 'remotes::install_version("plotly",upgrade="never", version = "4.9.2.1")'
 RUN Rscript -e 'remotes::install_version("shinycssloaders",upgrade="never", version = "1.0.0")'
 RUN Rscript -e 'remotes::install_version("shinyjs",upgrade="never", version = "1.1")'
 RUN Rscript -e 'remotes::install_version("wesanderson",upgrade="never", version = "0.3.6")'
@@ -49,9 +48,14 @@ RUN Rscript -e 'remotes::install_version("pool",upgrade="never", version = "0.1.
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.14")'
 RUN Rscript -e 'remotes::install_version("RPostgreSQL",upgrade="never", version = "0.6-2")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.2.1")'
-RUN Rscript -e 'remotes::install_github("Rosalien/dataAccessApp")'
+# version 0.1.0 because https://github.com/tidyverse/tidyr/issues/1024
+RUN Rscript -e 'remotes::install_version("cpp11", version = "0.1.0", repos = "http://cran.us.r-project.org")'
+# version 1.1.0 because https://github.com/tidyverse/tidyr/issues/1024
+RUN Rscript -e 'remotes::install_version("tidyr",version="1.1.0",upgrade="never")'
+RUN Rscript -e 'remotes::install_version("plotly",version="4.9.2",upgrade="never")'
+RUN Rscript -e 'remotes::install_github("Rosalien/dataAccessApp",upgrade="never")'
 RUN mkdir /build_zone
 ADD . /build_zone
 WORKDIR /build_zone
 EXPOSE 80
-CMD R -e "options('shiny.port'=3597,shiny.host='127.0.0.1');dataAccessApp::run_app(language='en',pool='dbconfProd.yaml')"
+CMD R -e "options('shiny.port'=3597,shiny.host='127.0.0.1');dataAccessApp::run_app(language='en',pool='dbconfLocal.yaml')"

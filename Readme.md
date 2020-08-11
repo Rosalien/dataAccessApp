@@ -18,11 +18,11 @@ devtools::install_github("Rosalien/dataAccessApp")
 
 dataAccessApp works with a postgresql database build with [data-snot.cnrs.fr](https://data-snot.cnrs.fr/). To test dataAccessApp, you can used a [dump of database test](https://github.com/Rosalien/dataAccessApp/tree/master/inst/extdata) with these parameters :
 
-	- dbname: "sno"
-	- host: "localhost"
-	- port: "5432"
-	- user : "snouser"
-	- password: "sno001"
+- dbname: "sno"
+- host: "localhost"
+- port: "5432"
+- user : "snouser"
+- password: "sno001"
 
 ## Deploy
 
@@ -57,7 +57,7 @@ dataAccessApp::run_app(language,pool)
 ### Docker
 
 ```bash
-docker build -t dataaccessapp
+docker build -t dataaccessapp .
 ```
 
 ```bash
