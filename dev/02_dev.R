@@ -27,7 +27,7 @@ usethis::use_dev_package('toolboxApps')
 
 ## Files don't used ----
 usethis::use_build_ignore(c("dbconfLocal.yaml","dbconfProd.yaml"))
-usethis::use_build_ignore("Readme.R")
+usethis::use_build_ignore("Readme.md")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
