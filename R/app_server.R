@@ -22,7 +22,7 @@ app_server <- function( input, output, session ) {
      shinyjs::hide(id = "loading-content", anim = TRUE, animType = "fade")    
   	 shinyjs::show("app-content")
   	 mod_welcome("mod_welcomeUI_1")
-	 mod_accessdata("mod_accessdataUI_1")
-	 mod_about("mod_aboutUI_1")
+	   mod_accessdata("mod_accessdataUI_1")
+	   mod_about("mod_aboutUI_1")
 }
 

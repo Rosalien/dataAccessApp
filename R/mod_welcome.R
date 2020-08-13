@@ -165,7 +165,7 @@ outdbcartoDataStation <- reactiveValues()
     print("tableInstu")
     retInstru <- DT::datatable(outdbcartoDataStation$tableinstru, rownames= FALSE,filter = 'top',extensions = 'Buttons',
       options = list(dom = "Blfrtip", buttons = list("copy",list(extend = "collection", buttons = c("csv", "excel", "pdf"),text = translator$t("Télécharger la table"))),
-                    pageLength = 5, autoWidth = TRUE))
+                    pageLength = 5, lengthMenu = c(5, 10, 25, 50, nrow(outdbcartoDataStation$tableCaracData)),autoWidth = TRUE))
     return(retInstru)
   })# Fin de la table
 
@@ -174,7 +174,7 @@ outdbcartoDataStation <- reactiveValues()
     # Condition pour afficher tous les sites
     retDataDispo <- DT::datatable(outdbcartoDataStation$tableCaracData, rownames= FALSE,filter = 'top',extensions = 'Buttons',
       options = list(dom = "Blfrtip", buttons = list("copy",list(extend = "collection", buttons = c("csv", "excel", "pdf"),text = translator$t("Télécharger la table"))),
-                    pageLength = 5, autoWidth = TRUE))
+                    pageLength = 5, lengthMenu = c(5, 10, 25, 50, nrow(outdbcartoDataStation$tableCaracData)),autoWidth = TRUE))
     return(retDataDispo)
   })# Fin de la table
 
